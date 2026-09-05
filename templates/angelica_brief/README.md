@@ -4,7 +4,7 @@ Esta carpeta es la **hoja humana**. No toques YAML ni código. Cursor arma el re
 
 **Archivo:** `plantilla_reel_angelica.xlsx` — pestaña **Brief** (lo que llenas) y pestaña **Instrucciones**. Ábrelo en Excel o súbelo a Drive → Abrir con → Hojas de cálculo de Google.
 
-Arriba: título, segundos a cortar al inicio, cuándo terminas de hablar (reloj de **tu** video).
+Arriba: título, **el reel empieza en** (momento exacto en tu grabación, ej. `0:04` — no recortes el archivo), cuándo **terminas de hablar**.
 
 Luego una fila por cosa que se ve:
 

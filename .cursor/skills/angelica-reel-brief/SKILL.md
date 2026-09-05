@@ -52,7 +52,7 @@ Do not retry in a loop waiting for them. After they confirm login, continue.
 ## New reel
 
 1. Activate `angelica-website` (and remind the user about `gcloud auth login` if transcribe will run).
-2. `projects/<slug>/` with `source/talking_head.mp4` and `overlays/`.
+2. `projects/<slug>/` with `source/talking_head.mp4` **uncut** (her file as recorded) and `overlays/`.
 3. Save her workbook as `projects/<slug>/BRIEF_Angelica.xlsx`.
 4. First pass:
    ```bash
@@ -77,7 +77,11 @@ Messy Spanish is expected. Map it; do not make her rewrite.
 - “se suma” / “también” / two things at once = two overlays that overlap (frutero right + susto left). Same PNG may appear twice (susto).
 - Endcard / WhatsApp card: never in her table; brand pack adds it after `talk_end`.
 
-Times are **source clock** (her recording). She writes ``1:29,5`` or ``10:25,5`` (minutes:seconds, tenths with a comma). Not frames — captions come from Gemini. `trim_start` is “Cortar al inicio”. Final time = source − trim. Do not retune against the published Instagram file.
+Times are **source clock** (her original file, including pre-roll). She writes ``0:04``, ``1:29,5``, ``10:25,5`` (minutes:seconds, tenths with a comma). Not frames — captions come from Gemini.
+
+**Do not cut the source mp4.** She usually hits record 1–5s before speaking and leaves 1–5s after. Copy `talking_head.mp4` as she sent it. “El reel empieza en” → `source.trim_start`. “Terminas de hablar” → `source.talk_end`. Overlay Desde/Hasta stay on that same clock. If you trim the file first, every time she wrote is wrong.
+
+Final reel time = source − trim_start. Do not retune against the published Instagram file.
 
 ## Locked compose (do not regress)
 

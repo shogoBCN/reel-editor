@@ -320,7 +320,10 @@ def brief_dict_from_csv_dir(csv_dir: Path) -> dict[str, Any]:
             "transcript": project_fields.get("transcripcion") or "source/transcript.json",
             "overlays": "overlays",
             "trim_start": parse_timestamp_to_seconds(
-                project_fields.get("cortar_inicio") or project_fields.get("trim_start") or 0
+                project_fields.get("cortar_inicio")
+                or project_fields.get("empieza_el_reel")
+                or project_fields.get("trim_start")
+                or 0
             ),
             "talk_end": parse_timestamp_to_seconds(
                 project_fields.get("fin_de_habla") or project_fields.get("talk_end")
@@ -511,7 +514,11 @@ def brief_dict_from_simple_sheet(
         value = str(table_sheet.cell(row_index, 2).value or "").strip()
         if "titulo" in label:
             title = value
-        elif "cortar" in label:
+        elif (
+            "cortar" in label
+            or "empieza" in label
+            or label.startswith("el_reel")
+        ):
             trim_raw = value or "0"
         elif "hablar" in label or "terminas" in label or label.startswith("fin"):
             talk_end_raw = value

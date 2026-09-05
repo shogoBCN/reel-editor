@@ -3,11 +3,19 @@
 Manda el video + esta Excel. Escribe como hables. Cursor arma el reel.
 Los subtítulos salen solos: no los marques aquí.
 
+## No recortes el archivo
+
+Sueles darle a grabar 1–5 segundos antes de hablar, y dejas 1–5 segundos
+después. Está bien. Envía el video entero. Si lo cortas, todos los tiempos
+de esta hoja quedan mal.
+
 ## Arriba (pestaña Brief)
 
 - Título del reel.
-- Cortar al inicio: segundos de silencio o toma fallida (ej. 4).
-- Terminas de hablar: reloj de TU video (ej. 1:29,5).
+- El reel empieza en: el momento exacto en el reloj de TU video
+  (ej. 0:04 o 0:05). Ahí empieza lo publicado, no «quita 4 segundos».
+- Terminas de hablar: cuando dejas de hablar (ej. 1:29,5).
+  Lo que grabes de más al final no hace falta marcarlo; la tarjeta sale sola.
 
 ## Una fila por cosa que se ve
 
@@ -18,11 +26,14 @@ La tarjeta de WhatsApp del final no va aquí: sale sola.
 
 ## Tiempos (reloj de TU grabación)
 
+Todos los tiempos (empieza, termina, desde, hasta) son el mismo reloj:
+el archivo que filmaste, incluyendo los segundos de silencio al inicio.
 No uses el reloj del Instagram ya publicado.
-No hace falta al frame (ni 0:05.50 ni fotogramas). Un décimo de segundo basta.
+No hace falta al frame. Un décimo de segundo basta.
 
 Escribe minutos:segundos, y si hace falta un décimo con COMA:
 
+- 0:04 = el reel empieza en el segundo 4 de tu grabación
 - 0:28 = segundo 28 de tu video
 - 1:29,5 = 1 minuto 29 segundos y medio
 - 10:25,5 = 10 minutos 25 segundos y medio

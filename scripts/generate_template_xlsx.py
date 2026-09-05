@@ -34,8 +34,8 @@ INSTRUCTIONS_PATH = REPOSITORY_ROOT / "templates" / "angelica_brief" / "00_instr
 TEXT_NUMBER_FORMAT = "@"
 
 HINT = (
-    "Tiempos: 1:29,5 (minutos:segundos, décimos con coma). "
-    "No hace falta al frame. Reloj = TU video. "
+    "No recortes el video: marca dónde empieza el reel y cuándo terminas de hablar. "
+    "Tiempos: 1:29,5 (minutos:segundos, décimos con coma). Reloj = TU grabación. "
     "Pega la foto del tamaño que sea. En «Qué quieres»: qué se ve, "
     "dónde (derecha / izquierda / arriba) y tamaño (grande / mediano / chico). "
     "Dos fotos juntas = dos filas. Ver pestaña Instrucciones."
@@ -51,7 +51,7 @@ def _read_csv_rows(path: Path) -> list[dict[str, str]]:
 def _project_fields_from_csv(csv_directory: Path) -> dict[str, str]:
     """Read título / cortar_inicio / fin_de_habla from 01_proyecto.csv."""
     path = csv_directory / "01_proyecto.csv"
-    fields = {"titulo": "", "cortar_inicio": "4", "fin_de_habla": ""}
+    fields = {"titulo": "", "cortar_inicio": "", "fin_de_habla": ""}
     if not path.is_file():
         return fields
     for row in _read_csv_rows(path):
@@ -59,8 +59,8 @@ def _project_fields_from_csv(csv_directory: Path) -> dict[str, str]:
         value = (row.get("valor") or "").strip()
         if key == "titulo":
             fields["titulo"] = value
-        elif key == "cortar_inicio":
-            fields["cortar_inicio"] = value
+        elif key in ("cortar_inicio", "empieza_el_reel", "trim_start"):
+            fields["cortar_inicio"] = _sheet_time_cell(value)
         elif key == "fin_de_habla":
             try:
                 fields["fin_de_habla"] = format_seconds_as_sheet_timestamp(
@@ -187,7 +187,7 @@ def generate_xlsx(
     fields = (
         _project_fields_from_csv(csv_directory)
         if csv_directory
-        else {"titulo": "", "cortar_inicio": "4", "fin_de_habla": ""}
+        else {"titulo": "", "cortar_inicio": "", "fin_de_habla": ""}
     )
     overlay_rows = _overlay_rows_from_csv(csv_directory) if csv_directory else []
 
@@ -203,8 +203,9 @@ def generate_xlsx(
 
     sheet["A1"] = "Título"
     sheet["B1"] = fields["titulo"]
-    sheet["A2"] = "Cortar al inicio (segundos)"
+    sheet["A2"] = "El reel empieza en (reloj de TU video)"
     sheet["B2"] = fields["cortar_inicio"]
+    sheet["B2"].number_format = TEXT_NUMBER_FORMAT
     sheet["A3"] = "Terminas de hablar (reloj de TU video)"
     sheet["B3"] = fields["fin_de_habla"]
     sheet["B3"].number_format = TEXT_NUMBER_FORMAT
@@ -227,7 +228,7 @@ def generate_xlsx(
         cell.font = header_font
         cell.alignment = wrap
 
-    widths = (12, 12, 14, 72)
+    widths = (44, 14, 14, 56)
     for column_index, width in enumerate(widths, start=1):
         sheet.column_dimensions[get_column_letter(column_index)].width = width
 
