@@ -59,6 +59,23 @@ def main() -> None:
     expect(np.array_equal(roll_mid[0], outgoing[height // 2]), "roll top row from A")
     expect(np.array_equal(roll_mid[-1], incoming[height // 2 - 1]), "roll bottom row from B")
 
+    wipe_mid = mix_transition_frames(outgoing, incoming, 0.5, "wipe_right")
+    expect(np.array_equal(wipe_mid[:, : width // 2], incoming[:, : width // 2]), "wipe left is B")
+    expect(np.array_equal(wipe_mid[:, width // 2 :], outgoing[:, width // 2 :]), "wipe right is A")
+
+    teal_mid = mix_transition_frames(outgoing, incoming, 0.5, "fade_teal")
+    expect(abs(int(teal_mid[0, 0, 0]) - 6) <= 2, "fade_teal red")
+    expect(abs(int(teal_mid[0, 0, 1]) - 138) <= 2, "fade_teal green")
+    expect(abs(int(teal_mid[0, 0, 2]) - 147) <= 2, "fade_teal blue")
+
+    iris_mid = mix_transition_frames(outgoing, incoming, 0.5, "iris")
+    expect(np.array_equal(iris_mid[height // 2, width // 2], incoming[height // 2, width // 2]), "iris centre is B")
+    expect(np.array_equal(iris_mid[0, 0], outgoing[0, 0]), "iris corner is A")
+
+    zoom_mid = mix_transition_frames(outgoing, incoming, 0.5, "zoom_in")
+    expect(not np.array_equal(zoom_mid, outgoing), "zoom_in midpoint moved")
+    expect(not np.array_equal(zoom_mid, incoming), "zoom_in midpoint not pure B")
+
     parsed = parse_scene_transition(
         {"id": "jump", "start": 12.8, "end": 13.4, "cut": 13.1, "style": "crossfade"}
     )

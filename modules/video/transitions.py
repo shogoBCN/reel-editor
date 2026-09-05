@@ -13,6 +13,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 import numpy as np
+from PIL import Image
 
 from modules.video.timing import parse_timestamp_to_seconds, smoothstep
 
@@ -22,7 +23,14 @@ TRANSITION_STYLE_NAMES = (
     "crossfade",
     "slide_left",
     "roll_up",
+    "wipe_right",
+    "fade_teal",
+    "iris",
+    "zoom_in",
 )
+
+# Same RGB as brands/dra_angelica/brand.yaml colours.teal — used only by fade_teal.
+BRAND_TEAL_RGB = (6, 138, 147)
 
 
 @dataclass(frozen=True)
@@ -124,7 +132,7 @@ def parse_transition_style_list(raw: str | None) -> list[str]:
     """Split a comma-separated style list from the CLI.
 
     Args:
-        raw: e.g. ``fade_white,crossfade,slide_left,roll_up``. Empty = none.
+        raw: e.g. ``fade_white,iris,zoom_in``. Empty = none.
 
     Returns:
         Deduped style names in the given order.
@@ -260,11 +268,128 @@ def _roll_up(outgoing: np.ndarray, incoming: np.ndarray, progress: float) -> np.
     return frame
 
 
+def _wipe_right(outgoing: np.ndarray, incoming: np.ndarray, progress: float) -> np.ndarray:
+    """Hard wipe: a vertical edge travels left to right, revealing incoming in place.
+
+    Unlike ``slide_left``, neither take moves — B is uncovered where it already sits.
+
+    Args:
+        outgoing: Frame before the cut.
+        incoming: Frame after the cut.
+        progress: 0–1 through the window.
+
+    Returns:
+        Mixed uint8 frame.
+    """
+    width = outgoing.shape[1]
+    edge = int(round(smoothstep(progress) * width))
+    edge = max(0, min(width, edge))
+    if edge == 0:
+        return outgoing
+    if edge >= width:
+        return incoming
+    frame = outgoing.copy()
+    frame[:, :edge] = incoming[:, :edge]
+    return frame
+
+
+def _fade_teal(outgoing: np.ndarray, incoming: np.ndarray, progress: float) -> np.ndarray:
+    """Fade outgoing through brand teal, then teal into incoming.
+
+    Args:
+        outgoing: Frame before the cut.
+        incoming: Frame after the cut.
+        progress: 0–1 through the window.
+
+    Returns:
+        Mixed uint8 frame.
+    """
+    eased = smoothstep(progress)
+    teal = np.empty_like(outgoing)
+    teal[..., 0] = BRAND_TEAL_RGB[0]
+    teal[..., 1] = BRAND_TEAL_RGB[1]
+    teal[..., 2] = BRAND_TEAL_RGB[2]
+    if eased <= 0.5:
+        return _blend(outgoing, teal, smoothstep(eased * 2.0))
+    return _blend(teal, incoming, smoothstep((eased - 0.5) * 2.0))
+
+
+def _iris(outgoing: np.ndarray, incoming: np.ndarray, progress: float) -> np.ndarray:
+    """Circular reveal from the centre, with a short feathered rim.
+
+    Args:
+        outgoing: Frame before the cut.
+        incoming: Frame after the cut.
+        progress: 0–1 through the window.
+
+    Returns:
+        Mixed uint8 frame.
+    """
+    height, width = outgoing.shape[:2]
+    centre_y = (height - 1) / 2.0
+    centre_x = (width - 1) / 2.0
+    max_radius = float(np.hypot(centre_x, centre_y))
+    radius = smoothstep(progress) * max_radius
+    rows = np.arange(height, dtype=np.float32)[:, None]
+    cols = np.arange(width, dtype=np.float32)[None, :]
+    distance = np.sqrt((rows - centre_y) ** 2 + (cols - centre_x) ** 2)
+    feather = 42.0
+    alpha = np.clip((radius - distance) / feather + 0.5, 0.0, 1.0)[:, :, None]
+    mixed = outgoing.astype(np.float32) * (1.0 - alpha) + incoming.astype(np.float32) * alpha
+    return mixed.astype(np.uint8)
+
+
+def _scale_about_centre(frame: np.ndarray, scale: float) -> np.ndarray:
+    """Enlarge a frame and crop back to the original canvas (centre-weighted).
+
+    Args:
+        frame: ``H×W×3`` uint8.
+        scale: Factor ≥ 1. Values below 1.0 return the input.
+
+    Returns:
+        Same-shape uint8 frame.
+    """
+    if scale <= 1.001:
+        return frame
+    height, width = frame.shape[:2]
+    new_width = max(width, int(round(width * scale)))
+    new_height = max(height, int(round(height * scale)))
+    resized = np.array(
+        Image.fromarray(frame).resize((new_width, new_height), Image.Resampling.BILINEAR)
+    )
+    y0 = max(0, (new_height - height) // 2)
+    x0 = max(0, (new_width - width) // 2)
+    return resized[y0 : y0 + height, x0 : x0 + width]
+
+
+def _zoom_in(outgoing: np.ndarray, incoming: np.ndarray, progress: float) -> np.ndarray:
+    """Punch through the cut: A zooms in as B zooms down from a slight oversize.
+
+    Args:
+        outgoing: Frame before the cut.
+        incoming: Frame after the cut.
+        progress: 0–1 through the window.
+
+    Returns:
+        Mixed uint8 frame.
+    """
+    eased = smoothstep(progress)
+    outgoing_scale = 1.0 + 0.22 * eased
+    incoming_scale = 1.22 - 0.22 * eased
+    zoomed_out = _scale_about_centre(outgoing, outgoing_scale)
+    zoomed_in = _scale_about_centre(incoming, incoming_scale)
+    return _blend(zoomed_out, zoomed_in, eased)
+
+
 _STYLE_MIXERS = {
     "fade_white": _fade_white,
     "crossfade": _crossfade,
     "slide_left": _slide_left,
     "roll_up": _roll_up,
+    "wipe_right": _wipe_right,
+    "fade_teal": _fade_teal,
+    "iris": _iris,
+    "zoom_in": _zoom_in,
 }
 
 

@@ -48,6 +48,15 @@ Add an entry for every meaningful change as soon as it lands (or when opening th
 
 ### Logs
 
+#### 2026-09-05 — Add — Four more jump-cut mixers
+
+- **Author:** Thorsten
+- **Area:** `modules/video/transitions.py`, `scripts/test_transitions.py`
+- **Description:** New styles: `wipe_right` (edge reveal, takes stay put), `fade_teal` (through brand teal), `iris` (feathered circle from centre), `zoom_in` (A punches in as B settles). Same brief windows; encode with `--transition-variants`.
+- **Rationale:** First four looks on *A partir de los 40* were useful; she asked for another round of options on the same cuts.
+- **Impact:** `TRANSITION_STYLE_NAMES` grows to eight. Existing briefs and the first four encodes are unchanged.
+- **Links:** [pipelines](pipelines/README.md)
+
 #### 2026-09-05 — Add — Jump-cut scene transitions (four styles)
 
 - **Author:** Thorsten

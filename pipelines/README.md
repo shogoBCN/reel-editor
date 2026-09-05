@@ -74,7 +74,10 @@ flowchart LR
 2. **Preview** (`--preview`) — seek-grab stills at `preview:` times (or overlay midpoints).
 3. **Full** (`--full`) — stream trimmed frames, composite per frame, mux H.264 CRF 17 + AAC with audio fade/pad.
 
-Optional **`transitions:`** in the brief (source clock): a window around a jump cut (`start` / `cut` / `end`). Mixers: `fade_white` (through white and back), `crossfade`, `slide_left` (push), `roll_up` (vertical push with a seam). `--transition-variants` writes one mp4 per style in a single decode.
+        Mixers: `fade_white`, `crossfade`, `slide_left`, `roll_up`, `wipe_right`
+        (reveal in place), `fade_teal` (brand-colour flash), `iris` (circle from
+        centre), `zoom_in` (punch through the cut). `--transition-variants` writes
+        one mp4 per style in a single decode.
 
 ```bash
 python pipelines/reel_compose.py --project examples/ya_tienes --preview
