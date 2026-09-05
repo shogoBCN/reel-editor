@@ -48,6 +48,14 @@ Add an entry for every meaningful change as soon as it lands (or when opening th
 
 ### Logs
 
+#### 2026-09-05 — Fix — Hint row no longer wipes «El reel empieza en»
+
+- **Author:** Thorsten
+- **Area:** `modules/brief/sheet_import.py`
+- **Description:** Import only reads the three header cells for start/end. The Instrucciones-style hint also contains «empieza» and was overwriting `trim_start` with 0. Slugify now strips em-dashes (`ya_tienes_medicina_familiar`).
+- **Rationale:** Smoke import of the filled «Ya tienes» workbook came back with `trim_start: 0`.
+- **Impact:** `0:04` in the sheet maps to `source.trim_start: 4.0` again.
+
 #### 2026-09-05 — Change — Brief marks where the reel starts; do not cut her file
 
 - **Author:** Thorsten

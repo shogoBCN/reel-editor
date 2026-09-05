@@ -481,7 +481,13 @@ def extract_xlsx_images_to_overlays(
 
 def _slugify_title(title: str, fallback: str) -> str:
     """Turn a human title into a folder-safe slug."""
-    raw = normalise_column_header(title).replace("—", " ").replace("-", " ")
+    raw = (
+        str(title or "")
+        .replace("—", " ")
+        .replace("–", " ")
+        .replace("-", " ")
+    )
+    raw = normalise_column_header(raw)
     parts = [part for part in raw.replace("__", "_").split("_") if part]
     slug = "_".join(parts)[:40]
     return slug or fallback
@@ -509,7 +515,9 @@ def brief_dict_from_simple_sheet(
     title = ""
     trim_raw = "0"
     talk_end_raw = ""
-    for row_index in range(1, header_row):
+    # Rows 1–3 only. The hint under the title also says «empieza» / «hablar»
+    # and would overwrite the start mark with an empty cell.
+    for row_index in range(1, min(4, header_row)):
         label = normalise_column_header(str(table_sheet.cell(row_index, 1).value or ""))
         value = str(table_sheet.cell(row_index, 2).value or "").strip()
         if "titulo" in label:
