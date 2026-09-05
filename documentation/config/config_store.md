@@ -4,7 +4,7 @@ Repository paths, 9:16 Reels canvas, and Meta 2026 safe-zone constants.
 
 **Location:** `config/config_store.py`
 
-**Related:** [module_initialiser](../modules/module_initialiser.md) · [reel_compose](../../pipelines/reel_compose/pipeline_docu/README.md) · [Start here](../guides/start_here.md)
+**Related:** [module_initialiser](../modules/module_initialiser.md) · [pipelines](../../pipelines/README.md) · [Start here](../guides/start_here.md)
 
 Brand colours, fonts, and assets are **not** here — they live in `brands/<id>/brand.yaml`.
 

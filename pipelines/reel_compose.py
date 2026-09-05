@@ -6,7 +6,7 @@ corrections), composites stickers + karaoke captions onto scaled frames,
 fades to white, and holds the brand endcard. Preview writes JPEGs; ``--full``
 writes H.264.
 
-See ``pipelines/reel_compose/pipeline_docu/README.md``.
+See ``pipelines/README.md``.
 """
 
 from __future__ import annotations
@@ -19,7 +19,7 @@ import numpy as np
 from PIL import Image
 
 PIPELINE_DIRECTORY = Path(__file__).resolve().parent
-REPOSITORY_ROOT = PIPELINE_DIRECTORY.parent.parent
+REPOSITORY_ROOT = PIPELINE_DIRECTORY.parent
 sys.path.insert(0, str(REPOSITORY_ROOT))
 
 from modules.brief.brief_loader import ProjectBrief, load_brief
@@ -73,7 +73,7 @@ class ReelComposePipeline:
             if self.brief.transcript_path is None or not self.brief.transcript_path.is_file():
                 raise FileNotFoundError(
                     f"Captions are enabled but transcript is missing: "
-                    f"{self.brief.transcript_path}. Run pipelines/transcribe/transcribe.py first."
+                    f"{self.brief.transcript_path}. Run pipelines/transcribe.py first."
                 )
             self.caption_groups = load_caption_groups(
                 self.brief.transcript_path,

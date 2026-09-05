@@ -20,7 +20,7 @@ Prefer Angélica filling the [Google Sheet template](../../templates/angelica_br
 
 ```bash
 conda activate angelica-website
-python pipelines/import_brief/import_brief.py \
+python pipelines/import_brief.py \
   --csv-dir projects/<slug>/brief_sheet \
   --out projects/<slug>/brief.yaml
 python scripts/check_brief.py --project projects/<slug>
@@ -33,7 +33,7 @@ Or edit `brief.yaml` directly (source-clock times).
 If PNGs have a black background:
 
 ```bash
-python pipelines/prepare_overlays/prepare_overlays.py \
+python pipelines/prepare_overlays.py \
   --input-dir projects/<slug>/overlays_raw \
   --output-dir projects/<slug>/overlays
 ```
@@ -43,7 +43,7 @@ Filenames in the brief must match (`overlays/frutero_alto.png`).
 ## 4. Transcript
 
 ```bash
-python pipelines/transcribe/transcribe.py --project projects/<slug>
+python pipelines/transcribe.py --project projects/<slug>
 ```
 
 Add Whisper mistakes to `captions.asr_fix` (or the Correcciones tab).
@@ -51,8 +51,8 @@ Add Whisper mistakes to `captions.asr_fix` (or the Correcciones tab).
 ## 5. Preview, then encode
 
 ```bash
-python pipelines/reel_compose/reel_compose.py --project projects/<slug> --preview
-python pipelines/reel_compose/reel_compose.py --project projects/<slug> --full
+python pipelines/reel_compose.py --project projects/<slug> --preview
+python pipelines/reel_compose.py --project projects/<slug> --full
 ```
 
 Preview JPEGs land in `projects/<slug>/frames/compose_preview/`. Adjust times in the brief and re-preview before `--full`.

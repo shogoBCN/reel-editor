@@ -2,7 +2,7 @@
 Cut near-black backgrounds from overlay PNGs (phone screenshots, emoji packs).
 
 Angélica often sends stickers on black. This is a one-shot prep step before
-compose; already-keyed assets in ``examples/`` do not need it again.
+compose; already-keyed assets in ``examples/`` do not need it again. See ``pipelines/README.md``.
 """
 
 from __future__ import annotations
@@ -14,7 +14,7 @@ from pathlib import Path
 from PIL import Image
 
 PIPELINE_DIRECTORY = Path(__file__).resolve().parent
-REPOSITORY_ROOT = PIPELINE_DIRECTORY.parent.parent
+REPOSITORY_ROOT = PIPELINE_DIRECTORY.parent
 sys.path.insert(0, str(REPOSITORY_ROOT))
 
 from modules.video.image_ops import cut_black_background

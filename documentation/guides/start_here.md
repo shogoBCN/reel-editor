@@ -7,7 +7,7 @@ You do **not** edit `compose.py` per client. You add a project folder and a brie
 ```text
 Phone recording  +  Google Sheet / YAML brief  +  PNG stickers
                          ↓
-              pipelines/reel_compose  (this engine)
+              pipelines/reel_compose.py  (this engine)
                          ↓
               1080×1920 mp4  +  preview JPEGs
 ```
@@ -30,7 +30,7 @@ The brief always uses **source** time. `scripts/check_brief.py` prints both.
 | Change canvas / safe zones | `config/config_store.py` |
 | Change overlay motion / placement rules | `modules/video/overlays.py` |
 | Change karaoke | `modules/video/captions.py` |
-| Understand a pipeline | `pipelines/<name>/pipeline_docu/README.md` |
+| Understand a pipeline | [`pipelines/README.md`](../../pipelines/README.md) |
 | Give Angélica a form | `templates/angelica_brief/` |
 
 ## Commands (conda `angelica-website`)
@@ -41,7 +41,7 @@ pip install -r requirements.txt
 
 python scripts/test_timing.py
 python scripts/check_brief.py --project examples/ya_tienes
-python pipelines/reel_compose/reel_compose.py --project examples/ya_tienes --preview
+python pipelines/reel_compose.py --project examples/ya_tienes --preview
 ```
 
 `--full` encodes the mp4 (minutes). Preview first.

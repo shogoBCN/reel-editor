@@ -2,8 +2,8 @@
 # runner.sh: run a pipeline script inside conda env angelica-website.
 #
 # Usage:
-#   ./runner.sh pipelines/reel_compose/reel_compose.py --project examples/ya_tienes --preview
-#   ./runner.sh pipelines/reel_compose/reel_compose.py logs/reel_compose.log --project examples/ya_tienes --full
+#   ./runner.sh pipelines/reel_compose.py --project examples/ya_tienes --preview
+#   ./runner.sh pipelines/reel_compose.py logs/reel_compose.log --project examples/ya_tienes --full
 #
 # If the second argument ends in .log, stdout/stderr append there (Locaria runner style).
 

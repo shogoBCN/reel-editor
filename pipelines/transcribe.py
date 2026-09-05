@@ -3,7 +3,7 @@ Word-timed Whisper transcription for a project talking-head clip.
 
 Writes ``source/transcript.json`` in the compact ``w`` / ``s`` / ``e`` shape
 ``modules.video.captions`` reads. Language defaults to the brief (``es`` for
-Dra. Angélica). Requires ``openai-whisper`` and ffmpeg.
+Dra. Angélica). Requires ``openai-whisper`` and ffmpeg. See ``pipelines/README.md``.
 """
 
 from __future__ import annotations
@@ -14,7 +14,7 @@ import sys
 from pathlib import Path
 
 PIPELINE_DIRECTORY = Path(__file__).resolve().parent
-REPOSITORY_ROOT = PIPELINE_DIRECTORY.parent.parent
+REPOSITORY_ROOT = PIPELINE_DIRECTORY.parent
 sys.path.insert(0, str(REPOSITORY_ROOT))
 
 from modules.brief.brief_loader import load_brief

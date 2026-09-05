@@ -48,6 +48,15 @@ Add an entry for every meaningful change as soon as it lands (or when opening th
 
 ### Logs
 
+#### 2026-09-05 — Change — Flatten pipeline scripts into `pipelines/`
+
+- **Author:** Thorsten
+- **Area:** `pipelines/`, `README.md`, `documentation/`
+- **Description:** Entry scripts sit directly in `pipelines/` (`reel_compose.py`, `import_brief.py`, `transcribe.py`, `prepare_overlays.py`). Per-pipeline `pipeline_docu/` folders are gone; one [pipelines/README.md](pipelines/README.md) covers all four.
+- **Rationale:** Nested `pipelines/<name>/<name>.py` plus a doc folder each was heavier than this repo needs.
+- **Impact:** Run `python pipelines/reel_compose.py …` (no extra path segment). Call sites and onboarding docs updated.
+- **Links:** [pipelines/README.md](pipelines/README.md)
+
 #### 2026-09-05 — Change — Descriptive names, Google-style docstrings, onboarding doc
 
 - **Author:** Thorsten
@@ -64,4 +73,4 @@ Add an entry for every meaningful change as soon as it lands (or when opening th
 - **Description:** Port the Dra. Angélica “Ya tienes” compose pipeline out of `dra-angelica-website` into a Locaria-shaped repo. Briefs drive timestamps and overlays; brand look lives in `brands/<id>/`. Spanish Google-Sheet template (CSV + xlsx) converts to `brief.yaml`.
 - **Rationale:** The locked reel was a one-off script. Next clips need the same engine without copying `compose.py`.
 - **Impact:** New reels are a project folder + sheet/YAML. Example `examples/ya_tienes` reproduces the locked overlay schedule (source clock, stickers beside the head, karaoke captions, full-frame endcard).
-- **Links:** [README](README.md) · [Angélica brief](documentation/guides/angelica_brief.md) · [reel_compose](pipelines/reel_compose/pipeline_docu/README.md)
+- **Links:** [README](README.md) · [Angélica brief](documentation/guides/angelica_brief.md) · [pipelines](pipelines/README.md)

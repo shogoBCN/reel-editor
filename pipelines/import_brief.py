@@ -2,7 +2,7 @@
 Turn Angélica's spreadsheet brief (CSV folder or xlsx) into ``brief.yaml``.
 
 Google Sheets is the human format; YAML is what compose reads. Run this after
-she sends a filled sheet, before ``reel_compose``.
+she sends a filled sheet, before ``reel_compose``. See ``pipelines/README.md``.
 """
 
 from __future__ import annotations
@@ -12,7 +12,7 @@ import sys
 from pathlib import Path
 
 PIPELINE_DIRECTORY = Path(__file__).resolve().parent
-REPOSITORY_ROOT = PIPELINE_DIRECTORY.parent.parent
+REPOSITORY_ROOT = PIPELINE_DIRECTORY.parent
 sys.path.insert(0, str(REPOSITORY_ROOT))
 
 from modules.brief.sheet_import import write_brief_from_csv_dir, write_brief_from_xlsx

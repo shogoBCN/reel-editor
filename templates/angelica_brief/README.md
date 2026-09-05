@@ -110,8 +110,8 @@ La tarjeta de contacto del final **no** va en esta tabla: se pone sola al termin
 El editor corre:
 
 ```bash
-python pipelines/import_brief/import_brief.py --csv-dir ruta/a/tus/csv --out projects/<slug>/brief.yaml
-python pipelines/reel_compose/reel_compose.py --project projects/<slug> --preview
+python pipelines/import_brief.py --csv-dir ruta/a/tus/csv --out projects/<slug>/brief.yaml
+python pipelines/reel_compose.py --project projects/<slug> --preview
 ```
 
 Primero salen JPEGs de preview para afinar tiempos; el encode largo es el segundo paso.

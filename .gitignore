@@ -41,3 +41,6 @@ htmlcov/
 # Logs
 *.log
 logs/
+
+# ignore projects folder
+projects/
