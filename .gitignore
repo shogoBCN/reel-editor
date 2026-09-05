@@ -8,13 +8,14 @@ __pycache__/
 auth/*
 !auth/auth-config.example.json
 
-# Local project media (briefs and small overlays are tracked; video is not)
+# Per-reel working copies — never commit
+projects/
+
+# Example media (video is local; overlays and brief.yaml stay tracked)
 *.mp4
 *.mov
 *.wav
 *.aac
-projects/*/output/
-projects/*/frames/
 examples/*/output/
 examples/*/frames/
 examples/*/source/*.mp4
@@ -48,7 +49,3 @@ logs/
 *.csv
 *.CSV
 !templates/angelica_brief/plantilla_reel_angelica.xlsx
-
-#projects folder, auth folder
-projects/
- 

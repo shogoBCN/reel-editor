@@ -84,7 +84,7 @@ Times are **source clock** (her recording). She writes ``1:29,5`` or ``10:25,5``
 - Stickers **beside** the head, never on the hat.
 - Captions on the coat, shared baseline. Keep `captions.asr_fix` even if Gemini is clean.
 - Brand `dra_angelica`. Canvas from `get_module("config_store")`.
-- Gold: `examples/ya_tienes/brief.yaml` and `projects/31-aug-26-ya-tienes/brief.yaml`.
+- Gold: `examples/ya_tienes/brief.yaml`.
 
 ## Blank template
 

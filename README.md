@@ -53,7 +53,7 @@ reel-editor/
 ├── brands/dra_angelica/            # colours, brush, endcard
 ├── templates/angelica_brief/       # Spanish sheet template
 ├── examples/ya_tienes/             # locked production example
-├── projects/                       # local reels (gitignored outputs)
+├── projects/                       # local reels (entire folder gitignored)
 ├── documentation/
 ├── CHANGELOG.md
 ├── requirements.txt
