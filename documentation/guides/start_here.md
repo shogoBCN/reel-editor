@@ -5,7 +5,7 @@ This repo turns a **talking-head video + a brief** into a 9:16 Instagram/Faceboo
 You do **not** edit `compose.py` per client. You add a project folder and a brief.
 
 ```text
-Phone recording  +  Google Sheet / YAML brief  +  PNG stickers
+Phone recording  +  Excel brief (or YAML)  +  PNG stickers
                          ↓
               pipelines/reel_compose.py  (this engine)
                          ↓
@@ -49,7 +49,7 @@ python pipelines/reel_compose.py --project examples/ya_tienes --preview
 
 ## Data vs engine
 
-- **Brief** (`brief.yaml` or the Google Sheet) = *when* and *which file*.
+- **Brief** (`brief.yaml`, after Cursor maps her Excel) = *when* and *which file*.
 - **Brand pack** = *how it looks* (teal brush, fonts, endcard).
 - **Engine** = trim, composite, captions, fade. Shared by every reel.
 

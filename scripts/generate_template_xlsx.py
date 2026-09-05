@@ -1,8 +1,9 @@
 """
 Build Angélica's one-page Excel brief.
 
-She fills three fields at the top and one row per overlay (time, photo or
-text, left/right/up). Run from repo root:
+She fills three fields at the top and one row per overlay (times, photo,
+natural-language «Qué quieres»). Cursor turns that into brief.yaml.
+Run from repo root:
 
     python scripts/generate_template_xlsx.py
     python scripts/generate_template_xlsx.py \\
@@ -28,10 +29,9 @@ FIRST_DATA_ROW = 7
 BLANK_DATA_ROWS = 12
 
 HINT = (
-    "Tiempos = TU video original (no Instagram). "
-    "Pega la foto en Foto. Lado: derecha, izquierda o arriba. "
-    "Sin foto = título en el cielo (escribe Texto). "
-    "La tarjeta de WhatsApp del final se pone sola."
+    "Escribe con tus palabras. Reloj = TU video, no Instagram. "
+    "Pega la foto en Foto. En «Qué quieres» di qué se ve y dónde "
+    "(derecha / izquierda / arriba). Cursor arma el reel."
 )
 
 
@@ -65,7 +65,7 @@ def _project_fields_from_csv(csv_directory: Path) -> dict[str, str]:
 
 
 def _overlay_rows_from_csv(csv_directory: Path) -> list[dict[str, str]]:
-    """Flatten the detailed overlay CSV into the six columns she sees."""
+    """Flatten the detailed overlay CSV into Desde / Hasta / Foto / Qué quieres."""
     path = csv_directory / "02_imagenes_y_tiempos.csv"
     if not path.is_file():
         return []
@@ -82,14 +82,28 @@ def _overlay_rows_from_csv(csv_directory: Path) -> list[dict[str, str]]:
             file_name = ""
         if kind == "etiqueta":
             file_name = ""
+        nota = (row.get("que_es") or "").strip()
+        extra = (row.get("notas_edicion") or "").strip()
+        lado = side
+        bits = [part for part in (nota, extra) if part]
+        if kind == "etiqueta" and text:
+            want = f"{text} arriba en el cielo"
+        elif kind == "enfoque":
+            want = text or "ENFOQUE INTEGRAL arriba en el cielo (sin foto, se genera)"
+        elif lado:
+            want = ". ".join(bits) if bits else ""
+            if lado and want and lado not in want.lower():
+                want = f"{want}. {lado} de la cabeza."
+            elif lado and not want:
+                want = f"{lado} de la cabeza"
+        else:
+            want = ". ".join(bits)
         simple.append(
             {
                 "desde": (row.get("tiempo_inicio") or "").strip(),
                 "hasta": (row.get("tiempo_fin") or "").strip(),
                 "archivo": file_name,
-                "texto": text,
-                "lado": side,
-                "nota": (row.get("que_es") or "").strip(),
+                "quieres": want.strip(),
             }
         )
     return simple
@@ -118,7 +132,6 @@ def generate_xlsx(
         from openpyxl.drawing.image import Image as ExcelImage
         from openpyxl.styles import Alignment, Font, PatternFill
         from openpyxl.utils import get_column_letter
-        from openpyxl.worksheet.datavalidation import DataValidation
     except ImportError as exc:
         raise ImportError("pip install openpyxl") from exc
 
@@ -147,22 +160,24 @@ def generate_xlsx(
     sheet["B3"] = fields["fin_de_habla"]
     for row_index in (1, 2, 3):
         sheet.cell(row_index, 1).font = label_font
-        sheet.merge_cells(start_row=row_index, start_column=2, end_row=row_index, end_column=6)
+        sheet.merge_cells(
+            start_row=row_index, start_column=2, end_row=row_index, end_column=4
+        )
 
-    sheet.merge_cells("A4:F4")
+    sheet.merge_cells("A4:D4")
     sheet["A4"] = HINT
     sheet["A4"].font = hint_font
     sheet["A4"].alignment = Alignment(wrap_text=True, vertical="center")
     sheet.row_dimensions[4].height = 36
 
-    headers = ["Desde", "Hasta", "Foto", "Texto", "Lado", "Nota"]
+    headers = ["Desde", "Hasta", "Foto", "Qué quieres"]
     for column_index, title in enumerate(headers, start=1):
         cell = sheet.cell(HEADER_ROW, column_index, title)
         cell.fill = header_fill
         cell.font = header_font
         cell.alignment = wrap
 
-    widths = (12, 12, 14, 28, 14, 40)
+    widths = (12, 12, 14, 72)
     for column_index, width in enumerate(widths, start=1):
         sheet.column_dimensions[get_column_letter(column_index)].width = width
 
@@ -176,9 +191,7 @@ def generate_xlsx(
             item = overlay_rows[offset]
             sheet.cell(excel_row, 1, item["desde"])
             sheet.cell(excel_row, 2, item["hasta"])
-            sheet.cell(excel_row, 4, item["texto"])
-            sheet.cell(excel_row, 5, item["lado"])
-            sheet.cell(excel_row, 6, item["nota"])
+            sheet.cell(excel_row, 4, item["quieres"])
             png_name = item.get("archivo") or ""
             png_path = (
                 overlay_directory / png_name
@@ -190,16 +203,6 @@ def generate_xlsx(
                 excel_image.width = 56
                 excel_image.height = 56
                 sheet.add_image(excel_image, f"C{excel_row}")
-
-    side_validation = DataValidation(
-        type="list",
-        formula1='"derecha,izquierda,arriba"',
-        allow_blank=True,
-    )
-    side_validation.prompt = "derecha / izquierda de la cabeza, o arriba (título)"
-    sheet.add_data_validation(side_validation)
-    last_row = FIRST_DATA_ROW + data_count - 1
-    side_validation.add(f"E{FIRST_DATA_ROW}:E{last_row}")
 
     sheet.freeze_panes = "A7"
     sheet.row_dimensions[1].height = 22

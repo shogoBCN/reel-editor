@@ -1,8 +1,10 @@
 """
-Convert Angélica's spreadsheet (CSV folder or xlsx) into canonical ``brief.yaml``.
+Convert Angélica's spreadsheet (CSV folder or xlsx) into a first-pass ``brief.yaml``.
 
-Google Sheets is the human editor: File → Download → CSV (or xlsx). Spanish
-column names map onto the YAML schema so she never has to touch YAML.
+The one-tab Excel (Desde / Hasta / Foto / Qué quieres) is what she fills, in
+her own words. Import is a sketch: Cursor amends it to engine-ready YAML
+(kinds, placements, sizes) using ``.cursor/skills/angelica-reel-brief``.
+Legacy multi-tab CSV/xlsx still works.
 """
 
 from __future__ import annotations
@@ -51,18 +53,23 @@ def normalise_column_header(name: str) -> str:
     Returns:
         Stable key such as ``tiempo_inicio``.
     """
-    return (
+    cleaned = (
         str(name or "")
         .strip()
         .lower()
-        .replace(" ", "_")
+        .replace("«", "")
+        .replace("»", "")
+        .replace("¿", "")
+        .replace("?", "")
         .replace("á", "a")
         .replace("é", "e")
         .replace("í", "i")
         .replace("ó", "o")
         .replace("ú", "u")
         .replace("ñ", "n")
+        .replace(" ", "_")
     )
+    return cleaned.strip("_")
 
 
 def read_csv_rows(path: Path) -> list[dict[str, str]]:
@@ -182,10 +189,17 @@ def overlays_from_rows(rows: list[dict[str, str]]) -> list[dict[str, Any]]:
             raise ValueError(f"Row {overlay_id}: missing tiempo_inicio / tiempo_fin")
         file_name = row.get("archivo_imagen") or row.get("archivo") or row.get("file")
         text = row.get("texto") or row.get("text")
+        notes = (
+            row.get("notas_edicion")
+            or row.get("notas")
+            or row.get("que_es")
+            or row.get("que_quieres")
+        )
+        hint = f"{text or ''} {notes or ''}".lower()
         raw_kind = row.get("tipo") or row.get("kind") or ""
         if raw_kind:
             kind = map_overlay_kind(raw_kind)
-        elif text and "enfoque" in text.lower():
+        elif "enfoque" in hint:
             kind = "enfoque_lockup"
         elif text and not file_name:
             kind = "brush_label"
@@ -213,7 +227,10 @@ def overlays_from_rows(rows: list[dict[str, str]]) -> list[dict[str, Any]]:
             overlay["font_size"] = int(
                 float(row.get("tamano_fuente") or row["font_size"])
             )
-        notes = row.get("notas_edicion") or row.get("notas") or row.get("que_es")
+        elif kind == "brush_label":
+            overlay["font_size"] = (
+                72 if "angélica" in (text or "").lower() or "angelica" in (text or "").lower() else 66
+            )
         if notes:
             overlay["notes"] = notes
         overlays.append(overlay)
@@ -462,7 +479,7 @@ def brief_dict_from_simple_sheet(
     row_to_filename: dict[int, str],
     project_dir_name: str,
 ) -> dict[str, Any]:
-    """Parse the one-tab Brief sheet (título + Desde/Hasta/Foto/Texto/Lado/Nota).
+    """Parse the one-tab Brief sheet (título + Desde/Hasta/Foto/Qué quieres).
 
     Args:
         sheet: Worksheet named Brief.
@@ -506,8 +523,30 @@ def brief_dict_from_simple_sheet(
             or cell(row_index, "archivo_imagen")
             or cell(row_index, "archivo")
         )
+        want = (
+            cell(row_index, "que_quieres")
+            or cell(row_index, "texto")
+            or cell(row_index, "nota")
+            or cell(row_index, "notas")
+            or cell(row_index, "que_es")
+        )
+        want_lower = want.lower()
         text = cell(row_index, "texto")
-        note = cell(row_index, "nota") or cell(row_index, "notas") or cell(row_index, "que_es")
+        if not file_name and not text:
+            if "enfoque" in want_lower:
+                text = "ENFOQUE INTEGRAL"
+            elif "angélica" in want_lower or "angelica" in want_lower:
+                text = "Dra. Angélica"
+            elif "medicina familiar" in want_lower:
+                text = "Medicina Familiar"
+        side = cell(row_index, "lado")
+        if not side:
+            if "izquierda" in want_lower:
+                side = "izquierda"
+            elif "derecha" in want_lower:
+                side = "derecha"
+            elif "arriba" in want_lower or "cielo" in want_lower:
+                side = "arriba"
         overlay_id = cell(row_index, "id") or (
             Path(file_name).stem if file_name else f"item_{len(overlay_rows) + 1}"
         )
@@ -518,8 +557,8 @@ def brief_dict_from_simple_sheet(
                 "tiempo_fin": end_raw,
                 "archivo_imagen": file_name,
                 "texto": text,
-                "lado": cell(row_index, "lado"),
-                "notas_edicion": note,
+                "lado": side,
+                "notas_edicion": want,
             }
         )
 

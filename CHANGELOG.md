@@ -48,6 +48,15 @@ Add an entry for every meaningful change as soon as it lands (or when opening th
 
 ### Logs
 
+#### 2026-09-05 — Change — Her brief is natural language; Cursor makes YAML
+
+- **Author:** Thorsten
+- **Area:** `templates/angelica_brief/`, `scripts/generate_template_xlsx.py`, `modules/brief/sheet_import.py`, `.cursor/skills/angelica-reel-brief/`
+- **Description:** Angélica's workbook is four columns (`Desde`, `Hasta`, `Foto`, `Qué quieres`) plus three cells at the top. Import sketches YAML from times, pasted photos, and free Spanish. Cursor amends it to engine-ready `brief.yaml` (skill `angelica-reel-brief`).
+- **Rationale:** The agent runs the pipelines; she should not fill `tipo`, `lado`, or pixel sizes.
+- **Impact:** `import_brief.py --xlsx` still works as a first pass. Do not compose from that YAML until overlays match `examples/ya_tienes/brief.yaml`.
+- **Links:** [Angélica brief](documentation/guides/angelica_brief.md) · [skill](.cursor/skills/angelica-reel-brief/SKILL.md)
+
 #### 2026-09-05 — Change — Brief sheet is Excel; images go in the workbook
 
 - **Author:** Thorsten

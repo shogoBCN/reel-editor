@@ -2,7 +2,7 @@
 
 All entry-point scripts live in this folder (no per-pipeline subfolders). Shared logic is in `modules/`; canvas constants are in `config/config_store.py`.
 
-Typical order for a new reel: **import_brief** → **prepare_overlays** (if PNGs are on black) → **transcribe** (if no transcript yet) → **reel_compose** (`--preview` then `--full`).
+Typical order for a new reel: **import_brief** (then Cursor amends YAML) → **prepare_overlays** (if PNGs are on black) → **transcribe** (if no transcript yet) → **reel_compose** (`--preview` then `--full`).
 
 ```bash
 conda activate angelica-website
@@ -14,12 +14,12 @@ Times in briefs are **source clock** (the original recording). Final reel time =
 
 ## import_brief
 
-Convert Angélica's spreadsheet (Excel `.xlsx` or CSV folder) into canonical `brief.yaml`. Pictures in the `imagen` column are extracted to `overlays/`.
+Convert Angélica's spreadsheet (one-tab Excel `.xlsx`, or legacy CSV folder) into a first-pass `brief.yaml`. Pictures in the `Foto` column are extracted to `overlays/`. «Qué quieres» lands in overlay `notes`.
 
-Excel is the file she fills (also opens in Google Sheets). YAML is the machine contract. See [templates/angelica_brief](../templates/angelica_brief/README.md). Spanish headers (`tiempo_inicio`, `lado`, `tipo`) map to `start` / `placement` / `kind`. Unknown `lado` or `tipo` values fail closed.
+Her sheet stays informal. Cursor amends the YAML to the engine contract (kinds, placements, sizes). See [templates/angelica_brief](../templates/angelica_brief/README.md) and `.cursor/skills/angelica-reel-brief`. Legacy tabs with `tipo` / `lado` still import.
 
 ```bash
-python pipelines/import_brief.py --xlsx projects/<slug>/brief_sheet/<slug>.xlsx --out projects/<slug>/brief.yaml
+python pipelines/import_brief.py --xlsx projects/<slug>/BRIEF_Angelica.xlsx --out projects/<slug>/brief.yaml
 python pipelines/import_brief.py --csv-dir examples/ya_tienes/brief_sheet --out examples/ya_tienes/brief.yaml
 ```
 

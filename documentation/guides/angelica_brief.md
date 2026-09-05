@@ -1,13 +1,9 @@
-# Angélica brief (human format)
+# Angélica brief (human) vs engine brief
 
-The brief she fills is an **Excel workbook** (`.xlsx`). She can open it in Excel or upload it to Google Drive → Open with Google Sheets. YAML is generated from it.
+Angélica fills a **one-tab Excel** in her own words. Cursor turns it into `brief.yaml` and runs the pipelines. She does not edit YAML, `tipo`, `lado`, or filenames.
 
-**Why a sheet:** timestamps, left/right, and pictures belong in a table. Paste stickers into the `imagen` column (Insert → image in cell). A Google Doc is easier for screenshots but is not parseable.
+**Workbook she sees:** [plantilla_reel_angelica.xlsx](../../templates/angelica_brief/plantilla_reel_angelica.xlsx) — columns `Desde`, `Hasta`, `Foto`, `Qué quieres`. Times = her original recording.
 
-**Template:** [templates/angelica_brief/](../../templates/angelica_brief/README.md)
+**Agent skill:** `.cursor/skills/angelica-reel-brief/SKILL.md` — import is a sketch; the agent amends YAML to the engine contract.
 
-**Workbook:** [plantilla_reel_angelica.xlsx](../../templates/angelica_brief/plantilla_reel_angelica.xlsx) — duplicate per reel.
-
-**Filled example:** [examples/ya_tienes/brief_sheet/](../../examples/ya_tienes/brief_sheet/)
-
-Clock rule: every time is her **original recording**, including opening silence. `cortar_inicio` is subtracted later. Two stickers at once = two rows.
+**Gold YAML:** [examples/ya_tienes/brief.yaml](../../examples/ya_tienes/brief.yaml)

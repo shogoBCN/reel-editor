@@ -1,9 +1,8 @@
-# Cómo llenar esta pestaña
+# Cómo llenar esta hoja
 
-1. Duplica la hoja Excel para el reel nuevo.
-2. En Proyecto: pon el slug, cortar_inicio y fin_de_habla.
-3. En Imágenes y tiempos: una fila por cosa que se ve. Reloj de TU video.
-4. Pega las fotos en la columna imagen (en la celda).
-5. lado = derecha | izquierda | gancho. tipo = sticker | etiqueta | enfoque.
-6. Correcciones: solo si un subtítulo sale mal.
-7. No pongas stickers en la cabeza. No uses el reloj del Instagram ya publicado.
+1. Título, segundos a cortar al inicio, cuándo terminas de hablar (reloj de TU video).
+2. Una fila por cosa que se ve: desde / hasta / pega la foto / qué quieres.
+3. Escribe como hables (derecha, izquierda, arriba, el susto se suma…).
+4. Sin foto = títulos (tu nombre, Medicina Familiar, ENFOQUE INTEGRAL).
+5. La tarjeta de WhatsApp del final no va aquí: sale sola.
+6. No uses el reloj del Instagram ya publicado. No pongas fotos encima de la cabeza.

@@ -4,7 +4,7 @@ Reusable **9:16 talking-head reel** toolkit: trim, overlays, karaoke captions, w
 
 **New here?** Read [Start here](documentation/guides/start_here.md) first (two clocks, where files live, one command to preview).
 
-Briefs are data (YAML or a Google Sheet). The engine does not hardcode a client schedule. Dra. Angélica is `brands/dra_angelica/`. The locked example is `examples/ya_tienes/`.
+Briefs are data. Angélica fills a one-tab Excel in her own words; Cursor turns that into `brief.yaml`. The engine does not hardcode a client schedule. Dra. Angélica is `brands/dra_angelica/`. The locked example is `examples/ya_tienes/`.
 
 **Layout** follows Locaria conventions ([`adaptria_pulls`](https://github.com/Locaria/adaptria_pulls): `config/`, `modules/`, `pipelines/`, `documentation/`, `CHANGELOG.md`). Pipeline scripts sit flat in `pipelines/` with one combined [README](pipelines/README.md).
 
@@ -17,7 +17,7 @@ Briefs are data (YAML or a Google Sheet). The engine does not hardcode a client 
 | Area | Entry | Role |
 |------|-------|------|
 | Compose | [`reel_compose.py`](pipelines/reel_compose.py) | Brief → preview JPEGs or H.264 reel |
-| Brief | [`import_brief.py`](pipelines/import_brief.py) | Google Sheet CSV/xlsx → `brief.yaml` |
+| Brief | [`import_brief.py`](pipelines/import_brief.py) | Her Excel (or legacy CSV) → first-pass `brief.yaml` |
 | Speech | [`transcribe.py`](pipelines/transcribe.py) | Gemini 3.5 Transcribe → `transcript.json` |
 | Assets | [`prepare_overlays.py`](pipelines/prepare_overlays.py) | Key black backgrounds on PNG stickers |
 
@@ -35,7 +35,7 @@ Drop `examples/ya_tienes/source/talking_head.mp4` locally if it is missing (mp4 
 
 ## Angélica's brief
 
-She fills a **Google Sheet** (timestamps, image filenames, left/right, notes) — not a Word doc. Template: [`templates/angelica_brief/`](templates/angelica_brief/README.md). Workbook: [`plantilla_reel_angelica.xlsx`](templates/angelica_brief/plantilla_reel_angelica.xlsx).
+She fills a **one-tab Excel** (`Desde` / `Hasta` / `Foto` / `Qué quieres`) — photos pasted in cells, notes in Spanish. Template: [`templates/angelica_brief/`](templates/angelica_brief/README.md). Workbook: [`plantilla_reel_angelica.xlsx`](templates/angelica_brief/plantilla_reel_angelica.xlsx). Cursor maps that onto `brief.yaml` (skill: `.cursor/skills/angelica-reel-brief`).
 
 Every time is the clock of **her original recording**. Opening silence is `cortar_inicio`.
 
@@ -67,7 +67,7 @@ reel-editor/
 | Getting started | [Start here](documentation/guides/start_here.md) | Two clocks, map of the repo, first commands |
 | | [How to add a reel](documentation/guides/how_to_add_a_reel.md) | New project folder, brief, preview, encode |
 | Brief | [Angélica brief](documentation/guides/angelica_brief.md) | Sheet vs YAML; clock rule |
-| | [Plantilla (ES)](templates/angelica_brief/README.md) | Tabs, `tipo` / `lado`, what to send |
+| | [Plantilla (ES)](templates/angelica_brief/README.md) | One tab: times, photo, qué quieres |
 | Config | [config_store](documentation/config/config_store.md) | Canvas, safe zones, paths |
 | Modules | [module_initialiser](documentation/modules/module_initialiser.md) | Singleton `get_module` |
 | Pipelines | [pipelines/README.md](pipelines/README.md) | import_brief, prepare_overlays, transcribe, reel_compose |

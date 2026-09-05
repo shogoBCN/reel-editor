@@ -1,11 +1,9 @@
 # Brief para Angélica — «Ya tienes»
 
-Un solo Excel: `BRIEF_Angelica_Ya_tienes.xlsx`
+Excel: `BRIEF_Angelica_Ya_tienes.xlsx`
 
-Manda **el video + esta hoja**.
+Manda **el video + esta hoja**. Escribe como hables. Cursor convierte esto al reel.
 
-1. Arriba: título, cuántos segundos cortar al inicio, cuándo terminas de hablar.
-2. Una fila por cosa que se ve: **Desde / Hasta / Foto o Texto / Lado**.
-3. Reloj = tu video original, no Instagram.
-4. Pega la PNG en **Foto**. Lado: derecha, izquierda o arriba (títulos).
-5. Sin foto + texto = tu nombre / Medicina Familiar / ENFOQUE INTEGRAL (se dibuja solo).
+- Arriba: título, segundos a cortar al inicio, cuándo terminas de hablar (reloj de **tu** video).
+- Una fila: desde / hasta / pega la foto / **qué quieres** (derecha, izquierda, arriba, el susto se suma…).
+- Sin foto = títulos (tu nombre, Medicina Familiar, ENFOQUE INTEGRAL). La tarjeta de WhatsApp sale sola.
