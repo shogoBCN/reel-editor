@@ -1,0 +1,43 @@
+# Byte-compiled
+__pycache__/
+*.py[cod]
+*$py.class
+.DS_Store
+
+# Credentials
+auth/*
+!auth/.gitkeep
+
+# Local project media (briefs and small overlays are tracked; video is not)
+*.mp4
+*.mov
+*.wav
+*.aac
+projects/*/output/
+projects/*/frames/
+examples/*/output/
+examples/*/frames/
+examples/*/source/*.mp4
+examples/*/source/*.wav
+
+# Cursor local rule copies (Locaria convention)
+cursor_md/
+
+# Environments
+.env
+.venv
+venv/
+env/
+
+# Tools
+.mypy_cache/
+.pytest_cache/
+.coverage
+htmlcov/
+*.egg-info/
+.idea/
+.vscode/
+
+# Logs
+*.log
+logs/

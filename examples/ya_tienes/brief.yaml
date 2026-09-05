@@ -1,0 +1,151 @@
+# Ya tienes — locked production brief (source clock = her recording).
+# Final reel time = source − trim_start (4.0s). Do not retune against the output mp4.
+
+project:
+  slug: ya_tienes
+  title: Ya tienes — medicina familiar
+  brand: dra_angelica
+  language: es
+
+source:
+  video: source/talking_head.mp4
+  transcript: source/transcript.json
+  overlays: overlays
+  trim_start: 4.0
+  talk_end: 89.5
+
+output:
+  filename: ya-tienes_final.mp4
+  fade_white: 0.70
+  endcard_hold: 2.00
+
+captions:
+  enabled: true
+  asr_fix:
+    lacena: alacena
+    elevado: elevada
+    revisa: revisé
+
+overlays:
+  - id: name
+    kind: brush_label
+    text: Dra. Angélica
+    font_size: 72
+    placement: hook_center
+    start: 5.50
+    end: 7.45
+    notes: Hook en el cielo cuando dice su nombre. No es un lower-third.
+
+  - id: specialty
+    kind: brush_label
+    text: Medicina Familiar
+    font_size: 66
+    placement: hook_center
+    start: 7.50
+    end: 11.40
+    notes: Sigue al nombre, misma ranura de gancho.
+
+  - id: pregunta
+    kind: sticker
+    file: overlays/pregunta.png
+    max_w: 400
+    max_h: 340
+    placement: right
+    start: 22.80
+    end: 26.20
+    notes: Signo de pregunta — concertamos una cita.
+
+  - id: frutero_alto
+    kind: sticker
+    file: overlays/frutero_alto.png
+    max_w: 480
+    max_h: 340
+    placement: right
+    start: 28.00
+    end: 36.00
+    notes: Frutero a la derecha (final 0:24–0:32).
+
+  - id: susto_frutero
+    kind: sticker
+    file: overlays/susto.png
+    max_w: 400
+    max_h: 340
+    placement: left
+    start: 32.00
+    end: 36.00
+    notes: Susto entra a la izquierda a los 0:28 finales, misma altura.
+
+  - id: dulces
+    kind: sticker
+    file: overlays/dulces.png
+    max_w: 460
+    max_h: 320
+    placement: right
+    start: 37.50
+    end: 45.00
+    notes: Alacena/dulces a la derecha (final 0:33.5–0:41).
+
+  - id: susto_dulces
+    kind: sticker
+    file: overlays/susto.png
+    max_w: 400
+    max_h: 340
+    placement: left
+    start: 39.50
+    end: 45.00
+    notes: Susto otra vez a la izquierda (final 0:35.5–0:41).
+
+  - id: idea
+    kind: sticker
+    file: overlays/idea.png
+    max_w: 400
+    max_h: 340
+    placement: right
+    start: 50.80
+    end: 56.80
+    notes: Bombillo — el punto de por qué se le subía el azúcar.
+
+  - id: frutero_bajo
+    kind: sticker
+    file: overlays/frutero_bajo.png
+    max_w: 480
+    max_h: 340
+    placement: right
+    start: 59.00
+    end: 66.20
+    notes: Frutas con menos azúcar, derecha (~0:55–1:02).
+
+  - id: sin_azucar
+    kind: sticker
+    file: overlays/sin_azucar.png
+    max_w: 420
+    max_h: 280
+    placement: left
+    start: 63.50
+    end: 66.20
+    notes: Dulces sin azúcar, izquierda (~0:59.5–1:02).
+
+  - id: enfoque
+    kind: enfoque_lockup
+    placement: hook_center
+    start: 80.00
+    end: 86.20
+    notes: ENFOQUE INTEGRAL / Bio-Psico-Social en el cielo, debajo del recorte de IG.
+
+preview:
+  name: 6.10
+  specialty: 8.20
+  pregunta: 24.20
+  frutero: 29.20
+  susto: 33.50
+  dulces: 40.00
+  idea: 53.50
+  pacto: 61.50
+  pair: 64.00
+  enfoque: 82.50
+  fade: 89.20
+
+notes:
+  - Stickers a la derecha/izquierda de la cabeza, nunca encima (parece sombrero).
+  - Tiempos en reloj del video original, no del reel recortado.
+  - Endcard es la tarjeta de contacto a casi pantalla completa (no apretar al 15–68%).

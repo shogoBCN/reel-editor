@@ -1,0 +1,1320 @@
+{
+  "text": " Hola amigos, soy la doctora Angélica, médico especialista en medicina familiar y hoy vengo a explicarles lo que es la medicina familiar por medio de un ejemplo. Hace algunos días me llega la consulta a un paciente con diabetes que persiste con azúcar elevado, le revisa el tratamiento, le revisa la forma en que comía y todo se veía correcto. Entonces concertamos una cita en su casa. Cuando llego a la cocina en su casa veo que hay un frutero muy grande con muchas frutas pero todas con muchísimo azúcar, mango, plátano, uvas. También reviso y hay una lacena con muchos dulces, galletas, chocolates. Le pregunto al paciente que si él las come y me dice sí, yo las como todas las tardes con mis nietos. Eso para él era algo muy importante, compartir con ellos. Entonces ese era el punto de por qué se le subía el azúcar al paciente. Pero entonces qué pactamos? Que él iba a comer frutas con sus nietos pero unas frutas con menos azúcar y que iba a comer dulces pero unos dulces sin azúcar y así mantendríamos ese lazo tan importante que era para él. ¿Qué hicimos aquí? Hicimos un enfoque social y familiar de la enfermedad. ¿Para qué? Para mejorar el tratamiento de la enfermedad del paciente. Esto amigos, esto es lo que hace la medicina familiar. Un saludo a todos y para cualquier otra pregunta me pueden escribir aquí en mi whatsapp. Adiós.",
+  "segments": [
+    {
+      "start": 1.42,
+      "end": 9.54,
+      "text": "Hola amigos, soy la doctora Angélica, médico especialista en medicina familiar y hoy vengo",
+      "words": [
+        {
+          "w": "Hola",
+          "s": 1.42,
+          "e": 1.86
+        },
+        {
+          "w": "amigos,",
+          "s": 1.86,
+          "e": 2.3
+        },
+        {
+          "w": "soy",
+          "s": 5.38,
+          "e": 5.5
+        },
+        {
+          "w": "la",
+          "s": 5.5,
+          "e": 5.72
+        },
+        {
+          "w": "doctora",
+          "s": 5.72,
+          "e": 6.0
+        },
+        {
+          "w": "Angélica,",
+          "s": 6.0,
+          "e": 6.42
+        },
+        {
+          "w": "médico",
+          "s": 6.48,
+          "e": 6.8
+        },
+        {
+          "w": "especialista",
+          "s": 6.8,
+          "e": 7.46
+        },
+        {
+          "w": "en",
+          "s": 7.46,
+          "e": 7.66
+        },
+        {
+          "w": "medicina",
+          "s": 7.66,
+          "e": 8.04
+        },
+        {
+          "w": "familiar",
+          "s": 8.04,
+          "e": 8.5
+        },
+        {
+          "w": "y",
+          "s": 8.5,
+          "e": 9.2
+        },
+        {
+          "w": "hoy",
+          "s": 9.2,
+          "e": 9.38
+        },
+        {
+          "w": "vengo",
+          "s": 9.38,
+          "e": 9.54
+        }
+      ]
+    },
+    {
+      "start": 9.54,
+      "end": 13.54,
+      "text": "a explicarles lo que es la medicina familiar por medio de un ejemplo. Hace algunos días",
+      "words": [
+        {
+          "w": "a",
+          "s": 9.54,
+          "e": 9.82
+        },
+        {
+          "w": "explicarles",
+          "s": 9.82,
+          "e": 10.1
+        },
+        {
+          "w": "lo",
+          "s": 10.1,
+          "e": 10.26
+        },
+        {
+          "w": "que",
+          "s": 10.26,
+          "e": 10.3
+        },
+        {
+          "w": "es",
+          "s": 10.3,
+          "e": 10.38
+        },
+        {
+          "w": "la",
+          "s": 10.38,
+          "e": 10.54
+        },
+        {
+          "w": "medicina",
+          "s": 10.54,
+          "e": 10.84
+        },
+        {
+          "w": "familiar",
+          "s": 10.84,
+          "e": 11.24
+        },
+        {
+          "w": "por",
+          "s": 11.24,
+          "e": 11.46
+        },
+        {
+          "w": "medio",
+          "s": 11.46,
+          "e": 11.66
+        },
+        {
+          "w": "de",
+          "s": 11.66,
+          "e": 11.82
+        },
+        {
+          "w": "un",
+          "s": 11.82,
+          "e": 11.96
+        },
+        {
+          "w": "ejemplo.",
+          "s": 11.96,
+          "e": 12.3
+        },
+        {
+          "w": "Hace",
+          "s": 12.86,
+          "e": 13.0
+        },
+        {
+          "w": "algunos",
+          "s": 13.0,
+          "e": 13.28
+        },
+        {
+          "w": "días",
+          "s": 13.28,
+          "e": 13.54
+        }
+      ]
+    },
+    {
+      "start": 13.54,
+      "end": 18.92,
+      "text": "me llega la consulta a un paciente con diabetes que persiste con azúcar elevado, le revisa",
+      "words": [
+        {
+          "w": "me",
+          "s": 13.54,
+          "e": 13.76
+        },
+        {
+          "w": "llega",
+          "s": 13.76,
+          "e": 13.88
+        },
+        {
+          "w": "la",
+          "s": 13.88,
+          "e": 14.1
+        },
+        {
+          "w": "consulta",
+          "s": 14.1,
+          "e": 14.62
+        },
+        {
+          "w": "a",
+          "s": 14.62,
+          "e": 14.7
+        },
+        {
+          "w": "un",
+          "s": 14.7,
+          "e": 14.84
+        },
+        {
+          "w": "paciente",
+          "s": 14.84,
+          "e": 15.32
+        },
+        {
+          "w": "con",
+          "s": 15.32,
+          "e": 15.6
+        },
+        {
+          "w": "diabetes",
+          "s": 15.6,
+          "e": 16.06
+        },
+        {
+          "w": "que",
+          "s": 16.06,
+          "e": 16.64
+        },
+        {
+          "w": "persiste",
+          "s": 16.64,
+          "e": 16.96
+        },
+        {
+          "w": "con",
+          "s": 16.96,
+          "e": 17.22
+        },
+        {
+          "w": "azúcar",
+          "s": 17.22,
+          "e": 17.54
+        },
+        {
+          "w": "elevado,",
+          "s": 17.54,
+          "e": 18.16
+        },
+        {
+          "w": "le",
+          "s": 18.56,
+          "e": 18.74
+        },
+        {
+          "w": "revisa",
+          "s": 18.74,
+          "e": 18.92
+        }
+      ]
+    },
+    {
+      "start": 18.92,
+      "end": 24.14,
+      "text": "el tratamiento, le revisa la forma en que comía y todo se veía correcto. Entonces",
+      "words": [
+        {
+          "w": "el",
+          "s": 18.92,
+          "e": 19.1
+        },
+        {
+          "w": "tratamiento,",
+          "s": 19.1,
+          "e": 19.9
+        },
+        {
+          "w": "le",
+          "s": 20.32,
+          "e": 20.48
+        },
+        {
+          "w": "revisa",
+          "s": 20.48,
+          "e": 20.74
+        },
+        {
+          "w": "la",
+          "s": 20.74,
+          "e": 20.88
+        },
+        {
+          "w": "forma",
+          "s": 20.88,
+          "e": 21.1
+        },
+        {
+          "w": "en",
+          "s": 21.1,
+          "e": 21.26
+        },
+        {
+          "w": "que",
+          "s": 21.26,
+          "e": 21.4
+        },
+        {
+          "w": "comía",
+          "s": 21.4,
+          "e": 21.7
+        },
+        {
+          "w": "y",
+          "s": 21.7,
+          "e": 21.88
+        },
+        {
+          "w": "todo",
+          "s": 21.88,
+          "e": 22.08
+        },
+        {
+          "w": "se",
+          "s": 22.08,
+          "e": 22.28
+        },
+        {
+          "w": "veía",
+          "s": 22.28,
+          "e": 22.74
+        },
+        {
+          "w": "correcto.",
+          "s": 22.74,
+          "e": 23.82
+        },
+        {
+          "w": "Entonces",
+          "s": 23.86,
+          "e": 24.14
+        }
+      ]
+    },
+    {
+      "start": 24.14,
+      "end": 28.88,
+      "text": "concertamos una cita en su casa. Cuando llego a la cocina en su casa veo que hay un frutero",
+      "words": [
+        {
+          "w": "concertamos",
+          "s": 24.14,
+          "e": 24.66
+        },
+        {
+          "w": "una",
+          "s": 24.66,
+          "e": 24.88
+        },
+        {
+          "w": "cita",
+          "s": 24.88,
+          "e": 25.06
+        },
+        {
+          "w": "en",
+          "s": 25.06,
+          "e": 25.22
+        },
+        {
+          "w": "su",
+          "s": 25.22,
+          "e": 25.36
+        },
+        {
+          "w": "casa.",
+          "s": 25.36,
+          "e": 25.66
+        },
+        {
+          "w": "Cuando",
+          "s": 26.12,
+          "e": 26.36
+        },
+        {
+          "w": "llego",
+          "s": 26.36,
+          "e": 26.58
+        },
+        {
+          "w": "a",
+          "s": 26.58,
+          "e": 26.7
+        },
+        {
+          "w": "la",
+          "s": 26.7,
+          "e": 26.88
+        },
+        {
+          "w": "cocina",
+          "s": 26.88,
+          "e": 27.14
+        },
+        {
+          "w": "en",
+          "s": 27.14,
+          "e": 27.3
+        },
+        {
+          "w": "su",
+          "s": 27.3,
+          "e": 27.44
+        },
+        {
+          "w": "casa",
+          "s": 27.44,
+          "e": 27.8
+        },
+        {
+          "w": "veo",
+          "s": 27.8,
+          "e": 28.12
+        },
+        {
+          "w": "que",
+          "s": 28.12,
+          "e": 28.28
+        },
+        {
+          "w": "hay",
+          "s": 28.28,
+          "e": 28.38
+        },
+        {
+          "w": "un",
+          "s": 28.38,
+          "e": 28.56
+        },
+        {
+          "w": "frutero",
+          "s": 28.56,
+          "e": 28.88
+        }
+      ]
+    },
+    {
+      "start": 28.88,
+      "end": 36.8,
+      "text": "muy grande con muchas frutas pero todas con muchísimo azúcar, mango, plátano, uvas. También",
+      "words": [
+        {
+          "w": "muy",
+          "s": 28.88,
+          "e": 29.06
+        },
+        {
+          "w": "grande",
+          "s": 29.06,
+          "e": 29.48
+        },
+        {
+          "w": "con",
+          "s": 29.48,
+          "e": 29.84
+        },
+        {
+          "w": "muchas",
+          "s": 29.84,
+          "e": 30.2
+        },
+        {
+          "w": "frutas",
+          "s": 30.2,
+          "e": 31.06
+        },
+        {
+          "w": "pero",
+          "s": 31.06,
+          "e": 31.36
+        },
+        {
+          "w": "todas",
+          "s": 31.36,
+          "e": 31.68
+        },
+        {
+          "w": "con",
+          "s": 31.68,
+          "e": 32.24
+        },
+        {
+          "w": "muchísimo",
+          "s": 32.24,
+          "e": 32.68
+        },
+        {
+          "w": "azúcar,",
+          "s": 32.68,
+          "e": 33.16
+        },
+        {
+          "w": "mango,",
+          "s": 33.64,
+          "e": 33.98
+        },
+        {
+          "w": "plátano,",
+          "s": 34.3,
+          "e": 34.94
+        },
+        {
+          "w": "uvas.",
+          "s": 35.04,
+          "e": 36.22
+        },
+        {
+          "w": "También",
+          "s": 36.54,
+          "e": 36.8
+        }
+      ]
+    },
+    {
+      "start": 36.8,
+      "end": 42.64,
+      "text": "reviso y hay una lacena con muchos dulces, galletas, chocolates. Le pregunto al paciente",
+      "words": [
+        {
+          "w": "reviso",
+          "s": 36.8,
+          "e": 37.22
+        },
+        {
+          "w": "y",
+          "s": 37.22,
+          "e": 37.34
+        },
+        {
+          "w": "hay",
+          "s": 37.34,
+          "e": 37.46
+        },
+        {
+          "w": "una",
+          "s": 37.46,
+          "e": 37.74
+        },
+        {
+          "w": "lacena",
+          "s": 37.74,
+          "e": 38.3
+        },
+        {
+          "w": "con",
+          "s": 38.3,
+          "e": 38.62
+        },
+        {
+          "w": "muchos",
+          "s": 38.62,
+          "e": 39.0
+        },
+        {
+          "w": "dulces,",
+          "s": 39.0,
+          "e": 39.54
+        },
+        {
+          "w": "galletas,",
+          "s": 39.74,
+          "e": 40.16
+        },
+        {
+          "w": "chocolates.",
+          "s": 40.5,
+          "e": 40.94
+        },
+        {
+          "w": "Le",
+          "s": 41.88,
+          "e": 42.04
+        },
+        {
+          "w": "pregunto",
+          "s": 42.04,
+          "e": 42.24
+        },
+        {
+          "w": "al",
+          "s": 42.24,
+          "e": 42.34
+        },
+        {
+          "w": "paciente",
+          "s": 42.34,
+          "e": 42.64
+        }
+      ]
+    },
+    {
+      "start": 42.64,
+      "end": 47.52,
+      "text": "que si él las come y me dice sí, yo las como todas las tardes con mis nietos. Eso para él",
+      "words": [
+        {
+          "w": "que",
+          "s": 42.64,
+          "e": 42.82
+        },
+        {
+          "w": "si",
+          "s": 42.82,
+          "e": 42.92
+        },
+        {
+          "w": "él",
+          "s": 42.92,
+          "e": 43.04
+        },
+        {
+          "w": "las",
+          "s": 43.04,
+          "e": 43.22
+        },
+        {
+          "w": "come",
+          "s": 43.22,
+          "e": 43.36
+        },
+        {
+          "w": "y",
+          "s": 43.36,
+          "e": 43.52
+        },
+        {
+          "w": "me",
+          "s": 43.52,
+          "e": 43.6
+        },
+        {
+          "w": "dice",
+          "s": 43.6,
+          "e": 43.74
+        },
+        {
+          "w": "sí,",
+          "s": 43.74,
+          "e": 44.04
+        },
+        {
+          "w": "yo",
+          "s": 44.12,
+          "e": 44.16
+        },
+        {
+          "w": "las",
+          "s": 44.16,
+          "e": 44.32
+        },
+        {
+          "w": "como",
+          "s": 44.32,
+          "e": 44.52
+        },
+        {
+          "w": "todas",
+          "s": 44.52,
+          "e": 44.78
+        },
+        {
+          "w": "las",
+          "s": 44.78,
+          "e": 45.0
+        },
+        {
+          "w": "tardes",
+          "s": 45.0,
+          "e": 45.22
+        },
+        {
+          "w": "con",
+          "s": 45.22,
+          "e": 45.44
+        },
+        {
+          "w": "mis",
+          "s": 45.44,
+          "e": 45.64
+        },
+        {
+          "w": "nietos.",
+          "s": 45.64,
+          "e": 46.68
+        },
+        {
+          "w": "Eso",
+          "s": 46.82,
+          "e": 47.1
+        },
+        {
+          "w": "para",
+          "s": 47.1,
+          "e": 47.36
+        },
+        {
+          "w": "él",
+          "s": 47.36,
+          "e": 47.52
+        }
+      ]
+    },
+    {
+      "start": 47.52,
+      "end": 54.16,
+      "text": "era algo muy importante, compartir con ellos. Entonces ese era el punto de por qué se le subía",
+      "words": [
+        {
+          "w": "era",
+          "s": 47.52,
+          "e": 47.8
+        },
+        {
+          "w": "algo",
+          "s": 47.8,
+          "e": 48.04
+        },
+        {
+          "w": "muy",
+          "s": 48.04,
+          "e": 48.36
+        },
+        {
+          "w": "importante,",
+          "s": 48.36,
+          "e": 48.72
+        },
+        {
+          "w": "compartir",
+          "s": 48.98,
+          "e": 49.42
+        },
+        {
+          "w": "con",
+          "s": 49.42,
+          "e": 49.76
+        },
+        {
+          "w": "ellos.",
+          "s": 49.76,
+          "e": 50.08
+        },
+        {
+          "w": "Entonces",
+          "s": 50.62,
+          "e": 51.02
+        },
+        {
+          "w": "ese",
+          "s": 51.02,
+          "e": 51.44
+        },
+        {
+          "w": "era",
+          "s": 51.44,
+          "e": 51.6
+        },
+        {
+          "w": "el",
+          "s": 51.6,
+          "e": 51.72
+        },
+        {
+          "w": "punto",
+          "s": 51.72,
+          "e": 51.94
+        },
+        {
+          "w": "de",
+          "s": 51.94,
+          "e": 52.18
+        },
+        {
+          "w": "por",
+          "s": 52.18,
+          "e": 52.44
+        },
+        {
+          "w": "qué",
+          "s": 52.44,
+          "e": 53.48
+        },
+        {
+          "w": "se",
+          "s": 53.48,
+          "e": 53.84
+        },
+        {
+          "w": "le",
+          "s": 53.84,
+          "e": 53.94
+        },
+        {
+          "w": "subía",
+          "s": 53.94,
+          "e": 54.22
+        }
+      ]
+    },
+    {
+      "start": 54.22,
+      "end": 60.16,
+      "text": "el azúcar al paciente. Pero entonces qué pactamos? Que él iba a comer frutas con sus nietos pero",
+      "words": [
+        {
+          "w": "el",
+          "s": 54.22,
+          "e": 54.42
+        },
+        {
+          "w": "azúcar",
+          "s": 54.42,
+          "e": 54.66
+        },
+        {
+          "w": "al",
+          "s": 54.66,
+          "e": 54.84
+        },
+        {
+          "w": "paciente.",
+          "s": 54.84,
+          "e": 55.4
+        },
+        {
+          "w": "Pero",
+          "s": 55.62,
+          "e": 55.68
+        },
+        {
+          "w": "entonces",
+          "s": 55.68,
+          "e": 55.88
+        },
+        {
+          "w": "qué",
+          "s": 55.88,
+          "e": 56.04
+        },
+        {
+          "w": "pactamos?",
+          "s": 56.04,
+          "e": 56.68
+        },
+        {
+          "w": "Que",
+          "s": 56.88,
+          "e": 57.02
+        },
+        {
+          "w": "él",
+          "s": 57.02,
+          "e": 57.14
+        },
+        {
+          "w": "iba",
+          "s": 57.14,
+          "e": 57.36
+        },
+        {
+          "w": "a",
+          "s": 57.36,
+          "e": 57.58
+        },
+        {
+          "w": "comer",
+          "s": 57.58,
+          "e": 57.9
+        },
+        {
+          "w": "frutas",
+          "s": 57.9,
+          "e": 58.46
+        },
+        {
+          "w": "con",
+          "s": 58.46,
+          "e": 58.72
+        },
+        {
+          "w": "sus",
+          "s": 58.72,
+          "e": 59.38
+        },
+        {
+          "w": "nietos",
+          "s": 59.38,
+          "e": 59.88
+        },
+        {
+          "w": "pero",
+          "s": 59.88,
+          "e": 60.16
+        }
+      ]
+    },
+    {
+      "start": 60.16,
+      "end": 66.56,
+      "text": "unas frutas con menos azúcar y que iba a comer dulces pero unos dulces sin azúcar y así mantendríamos",
+      "words": [
+        {
+          "w": "unas",
+          "s": 60.16,
+          "e": 60.4
+        },
+        {
+          "w": "frutas",
+          "s": 60.4,
+          "e": 60.82
+        },
+        {
+          "w": "con",
+          "s": 60.82,
+          "e": 61.08
+        },
+        {
+          "w": "menos",
+          "s": 61.08,
+          "e": 61.34
+        },
+        {
+          "w": "azúcar",
+          "s": 61.34,
+          "e": 61.84
+        },
+        {
+          "w": "y",
+          "s": 61.84,
+          "e": 62.34
+        },
+        {
+          "w": "que",
+          "s": 62.34,
+          "e": 62.46
+        },
+        {
+          "w": "iba",
+          "s": 62.46,
+          "e": 62.58
+        },
+        {
+          "w": "a",
+          "s": 62.58,
+          "e": 62.74
+        },
+        {
+          "w": "comer",
+          "s": 62.74,
+          "e": 62.88
+        },
+        {
+          "w": "dulces",
+          "s": 62.88,
+          "e": 63.34
+        },
+        {
+          "w": "pero",
+          "s": 63.34,
+          "e": 63.58
+        },
+        {
+          "w": "unos",
+          "s": 63.58,
+          "e": 63.8
+        },
+        {
+          "w": "dulces",
+          "s": 63.8,
+          "e": 64.22
+        },
+        {
+          "w": "sin",
+          "s": 64.22,
+          "e": 64.48
+        },
+        {
+          "w": "azúcar",
+          "s": 64.48,
+          "e": 65.0
+        },
+        {
+          "w": "y",
+          "s": 65.0,
+          "e": 65.54
+        },
+        {
+          "w": "así",
+          "s": 65.54,
+          "e": 65.82
+        },
+        {
+          "w": "mantendríamos",
+          "s": 65.82,
+          "e": 66.56
+        }
+      ]
+    },
+    {
+      "start": 66.56,
+      "end": 74.74,
+      "text": "ese lazo tan importante que era para él. ¿Qué hicimos aquí? Hicimos un enfoque social y familiar",
+      "words": [
+        {
+          "w": "ese",
+          "s": 66.56,
+          "e": 66.8
+        },
+        {
+          "w": "lazo",
+          "s": 66.8,
+          "e": 67.1
+        },
+        {
+          "w": "tan",
+          "s": 67.1,
+          "e": 67.38
+        },
+        {
+          "w": "importante",
+          "s": 67.38,
+          "e": 68.08
+        },
+        {
+          "w": "que",
+          "s": 68.08,
+          "e": 68.4
+        },
+        {
+          "w": "era",
+          "s": 68.4,
+          "e": 68.56
+        },
+        {
+          "w": "para",
+          "s": 68.56,
+          "e": 68.84
+        },
+        {
+          "w": "él.",
+          "s": 68.84,
+          "e": 69.06
+        },
+        {
+          "w": "¿Qué",
+          "s": 69.54,
+          "e": 69.8
+        },
+        {
+          "w": "hicimos",
+          "s": 69.8,
+          "e": 70.32
+        },
+        {
+          "w": "aquí?",
+          "s": 70.32,
+          "e": 70.7
+        },
+        {
+          "w": "Hicimos",
+          "s": 71.0,
+          "e": 71.42
+        },
+        {
+          "w": "un",
+          "s": 71.42,
+          "e": 71.66
+        },
+        {
+          "w": "enfoque",
+          "s": 71.66,
+          "e": 73.08
+        },
+        {
+          "w": "social",
+          "s": 73.08,
+          "e": 73.84
+        },
+        {
+          "w": "y",
+          "s": 73.84,
+          "e": 74.2
+        },
+        {
+          "w": "familiar",
+          "s": 74.2,
+          "e": 74.74
+        }
+      ]
+    },
+    {
+      "start": 74.74,
+      "end": 80.92,
+      "text": "de la enfermedad. ¿Para qué? Para mejorar el tratamiento de la enfermedad del paciente. Esto",
+      "words": [
+        {
+          "w": "de",
+          "s": 74.74,
+          "e": 75.02
+        },
+        {
+          "w": "la",
+          "s": 75.02,
+          "e": 75.24
+        },
+        {
+          "w": "enfermedad.",
+          "s": 75.24,
+          "e": 75.86
+        },
+        {
+          "w": "¿Para",
+          "s": 75.96,
+          "e": 76.26
+        },
+        {
+          "w": "qué?",
+          "s": 76.26,
+          "e": 76.56
+        },
+        {
+          "w": "Para",
+          "s": 76.62,
+          "e": 76.9
+        },
+        {
+          "w": "mejorar",
+          "s": 76.9,
+          "e": 77.54
+        },
+        {
+          "w": "el",
+          "s": 77.54,
+          "e": 78.0
+        },
+        {
+          "w": "tratamiento",
+          "s": 78.0,
+          "e": 78.58
+        },
+        {
+          "w": "de",
+          "s": 78.58,
+          "e": 78.76
+        },
+        {
+          "w": "la",
+          "s": 78.76,
+          "e": 78.94
+        },
+        {
+          "w": "enfermedad",
+          "s": 78.94,
+          "e": 79.32
+        },
+        {
+          "w": "del",
+          "s": 79.32,
+          "e": 79.5
+        },
+        {
+          "w": "paciente.",
+          "s": 79.5,
+          "e": 80.4
+        },
+        {
+          "w": "Esto",
+          "s": 80.78,
+          "e": 80.92
+        }
+      ]
+    },
+    {
+      "start": 80.92,
+      "end": 86.94,
+      "text": "amigos, esto es lo que hace la medicina familiar. Un saludo a todos y para cualquier otra pregunta",
+      "words": [
+        {
+          "w": "amigos,",
+          "s": 80.92,
+          "e": 81.42
+        },
+        {
+          "w": "esto",
+          "s": 81.66,
+          "e": 81.74
+        },
+        {
+          "w": "es",
+          "s": 81.74,
+          "e": 81.86
+        },
+        {
+          "w": "lo",
+          "s": 81.86,
+          "e": 82.0
+        },
+        {
+          "w": "que",
+          "s": 82.0,
+          "e": 82.24
+        },
+        {
+          "w": "hace",
+          "s": 82.24,
+          "e": 82.6
+        },
+        {
+          "w": "la",
+          "s": 82.6,
+          "e": 83.08
+        },
+        {
+          "w": "medicina",
+          "s": 83.08,
+          "e": 83.46
+        },
+        {
+          "w": "familiar.",
+          "s": 83.46,
+          "e": 83.94
+        },
+        {
+          "w": "Un",
+          "s": 84.62,
+          "e": 84.78
+        },
+        {
+          "w": "saludo",
+          "s": 84.78,
+          "e": 85.06
+        },
+        {
+          "w": "a",
+          "s": 85.06,
+          "e": 85.22
+        },
+        {
+          "w": "todos",
+          "s": 85.22,
+          "e": 85.34
+        },
+        {
+          "w": "y",
+          "s": 85.34,
+          "e": 85.6
+        },
+        {
+          "w": "para",
+          "s": 85.6,
+          "e": 85.96
+        },
+        {
+          "w": "cualquier",
+          "s": 85.96,
+          "e": 86.26
+        },
+        {
+          "w": "otra",
+          "s": 86.26,
+          "e": 86.54
+        },
+        {
+          "w": "pregunta",
+          "s": 86.54,
+          "e": 86.94
+        }
+      ]
+    },
+    {
+      "start": 86.94,
+      "end": 90.72,
+      "text": "me pueden escribir aquí en mi whatsapp. Adiós.",
+      "words": [
+        {
+          "w": "me",
+          "s": 86.94,
+          "e": 87.22
+        },
+        {
+          "w": "pueden",
+          "s": 87.22,
+          "e": 87.42
+        },
+        {
+          "w": "escribir",
+          "s": 87.42,
+          "e": 87.88
+        },
+        {
+          "w": "aquí",
+          "s": 87.88,
+          "e": 88.18
+        },
+        {
+          "w": "en",
+          "s": 88.18,
+          "e": 88.56
+        },
+        {
+          "w": "mi",
+          "s": 88.56,
+          "e": 88.72
+        },
+        {
+          "w": "whatsapp.",
+          "s": 88.72,
+          "e": 89.4
+        },
+        {
+          "w": "Adiós.",
+          "s": 90.12,
+          "e": 90.72
+        }
+      ]
+    }
+  ]
+}

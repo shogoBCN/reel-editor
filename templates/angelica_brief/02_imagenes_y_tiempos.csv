@@ -1,0 +1,12 @@
+id,tiempo_inicio,tiempo_fin,tipo,archivo_imagen,texto,lado,ancho_max,alto_max,tamano_fuente,que_es,notas_edicion
+name,0:05.50,0:07.45,etiqueta,,Dra. Angélica,gancho,,,72,Nombre en pincel teal,Gancho en el cielo cuando dices tu nombre. No es un lower-third.
+specialty,0:07.50,0:11.40,etiqueta,,Medicina Familiar,gancho,,,66,Especialidad,Misma ranura que el nombre.
+pregunta,0:22.80,0:26.20,sticker,pregunta.png,,derecha,400,340,,Signo de interrogación,Cuando dices que concertamos una cita. A la derecha de la cabeza no encima.
+frutero_alto,0:28.00,0:36.00,sticker,frutero_alto.png,,derecha,480,340,,Frutero con frutas altas en azúcar,Derecha. El susto se SUMA a la izquierda más tarde; no quitar este.
+susto_frutero,0:32.00,0:36.00,sticker,susto.png,,izquierda,400,340,,Cara de susto,Entra después del frutero; misma altura; izquierda.
+dulces,0:37.50,0:45.00,sticker,dulces.png,,derecha,460,320,,Alacena / dulces,Derecha cuando hablas de la alacena.
+susto_dulces,0:39.50,0:45.00,sticker,susto.png,,izquierda,400,340,,Cara de susto otra vez,Se suma a los dulces; no reemplaza.
+idea,0:50.80,0:56.80,sticker,idea.png,,derecha,400,340,,Bombillo,El punto de por qué se le subía el azúcar.
+frutero_bajo,0:59.00,1:06.20,sticker,frutero_bajo.png,,derecha,480,340,,Frutas con menos azúcar,Pacto. Derecha.
+sin_azucar,1:03.50,1:06.20,sticker,sin_azucar.png,,izquierda,420,280,,Dulces sin azúcar,Se suma a la izquierda.
+enfoque,1:20.00,1:26.20,enfoque,,,gancho,,,,ENFOQUE INTEGRAL Bio-Psico-Social,Generado; no hace falta PNG. Cielo debajo del recorte de IG.

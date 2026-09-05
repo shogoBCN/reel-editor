@@ -1,0 +1,43 @@
+# Dra. Angélica brand pack — colours, fonts, brush, endcard.
+# Compose never hardcodes these; other clients copy this folder and rename.
+
+id: dra_angelica
+display_name: Dra. Angélica — Medicina Familiar
+
+colours:
+  teal: [6, 138, 147]
+  gold: [245, 196, 48]
+  white: [255, 255, 255]
+  black: [0, 0, 0]
+  # High-contrast on teal: dark green/blue disappeared on the brush.
+  bio: [210, 255, 90]
+  psico: [196, 176, 255]
+  social: [255, 176, 70]
+
+fonts:
+  round: /System/Library/Fonts/Supplemental/Arial Rounded Bold.ttf
+  black: /System/Library/Fonts/Supplemental/Arial Black.ttf
+  bold: /System/Library/Fonts/Supplemental/Arial Bold.ttf
+
+assets:
+  brush: assets/brush.png
+  endcard: assets/endcard.png
+
+sticker:
+  inset: 18
+  # Same Y as the dual fruit-bowl slot — never centre on her head (reads as a hat).
+  y_from_top_safe: 8
+
+captions:
+  size: 56
+  # Coat V / cleavage — below the chin, above organic Reels UI.
+  y: 1528
+
+enfoque:
+  title: ENFOQUE INTEGRAL
+  parts:
+    - {text: "Bio", colour: bio}
+    - {text: "  -  ", colour: white}
+    - {text: "Psico", colour: psico}
+    - {text: "  -  ", colour: white}
+    - {text: "Social", colour: social}

@@ -1,0 +1,11 @@
+# Cómo llenar esta pestaña
+
+1. Duplica la hoja para el reel nuevo.
+2. En Proyecto: pon el slug, cortar_inicio (silencio al arranque) y fin_de_habla.
+3. En Imágenes y tiempos: una fila por cosa que se ve. Reloj de TU video.
+4. lado = derecha | izquierda | gancho. tipo = sticker | etiqueta | enfoque.
+5. Las PNG van en una carpeta con el nombre exacto de archivo_imagen.
+6. Correcciones: solo si Whisper se equivoca (lacena, revisa…).
+7. No pongas stickers en la cabeza. No uses el reloj del Instagram ya publicado.
+
+Ver templates/angelica_brief/README.md para el detalle completo.
