@@ -1,9 +1,38 @@
 # Cómo llenar esta hoja
 
-1. Título, segundos a cortar al inicio, cuándo terminas de hablar (reloj de TU video).
-2. Una fila por cosa que se ve: desde / hasta / pega la foto / qué quieres.
-3. Escribe como hables (derecha, izquierda, arriba, el susto se suma…).
-   Si dos fotos se ven juntas, son dos filas.
-4. Sin foto = títulos (tu nombre, Medicina Familiar, ENFOQUE INTEGRAL).
-5. La tarjeta de WhatsApp del final no va aquí: sale sola.
-6. No uses el reloj del Instagram ya publicado. No pongas fotos encima de la cabeza.
+Manda el video + esta Excel. Escribe como hables. Cursor arma el reel.
+Los subtítulos salen solos: no los marques aquí.
+
+## Arriba (pestaña Brief)
+
+- Título del reel.
+- Cortar al inicio: segundos de silencio o toma fallida (ej. 4).
+- Terminas de hablar: reloj de TU video (ej. 1:29,5).
+
+## Una fila por cosa que se ve
+
+Desde / Hasta / pega la Foto / Qué quieres.
+Si dos fotos se ven juntas (frutero + susto), son DOS filas que se solapan.
+Sin foto = títulos (tu nombre, Medicina Familiar, ENFOQUE INTEGRAL).
+La tarjeta de WhatsApp del final no va aquí: sale sola.
+
+## Tiempos (reloj de TU grabación)
+
+No uses el reloj del Instagram ya publicado.
+No hace falta al frame (ni 0:05.50 ni fotogramas). Un décimo de segundo basta.
+
+Escribe minutos:segundos, y si hace falta un décimo con COMA:
+
+- 0:28 = segundo 28 de tu video
+- 1:29,5 = 1 minuto 29 segundos y medio
+- 10:25,5 = 10 minutos 25 segundos y medio
+
+La coma evita que Excel lo convierta en hora del día. No pongas tres números (1:29:15).
+
+## Qué quieres
+
+Como hables: qué se ve, derecha / izquierda / arriba, si se suma a otra foto,
+y el tamaño (grande, mediano o chico). Pega la foto como la encuentres,
+del tamaño que sea. No recortes a pixels.
+
+No pongas fotos encima de la cabeza / gorro.

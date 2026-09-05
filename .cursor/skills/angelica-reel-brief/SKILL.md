@@ -15,7 +15,7 @@ She writes **natural language**. You produce `brief.yaml` and run the pipelines.
 
 | Who | File | What |
 |-----|------|------|
-| Angélica | `BRIEF_Angelica_*.xlsx` (one tab: Desde / Hasta / Foto / Qué quieres) | Times on **her original video**, photos pasted in cells, Spanish as she talks |
+| Angélica | `BRIEF_Angelica_*.xlsx` (Brief + Instrucciones; Desde / Hasta / Foto / Qué quieres) | Times on **her original video** as `1:29,5` (not frames), photos pasted in cells, Spanish as she talks |
 | Engine | `projects/<slug>/brief.yaml` | `kind`, `placement`, overlay paths, sizes, trim, captions, `preview` |
 
 `import_brief.py` is a **sketch** (times + extracted PNGs + notes). You **amend** YAML to match `examples/ya_tienes/brief.yaml` before compose.
@@ -58,7 +58,7 @@ Do not retry in a loop waiting for them. After they confirm login, continue.
    ```bash
    python pipelines/import_brief.py --xlsx projects/<slug>/BRIEF_Angelica.xlsx --out projects/<slug>/brief.yaml
    ```
-5. Read every «Qué quieres» cell (also in overlay `notes`). Rewrite overlays: kinds, placements, `file` names, `max_w`/`max_h`, `font_size`, `preview` midpoints.
+5. Read every «Qué quieres» cell (also in overlay `notes`). Rewrite overlays: kinds, placements, `file` names, `font_size`, `preview` midpoints. Keep inferred `max_w`/`max_h` unless a sticker looks wrong in preview.
 6. `python pipelines/transcribe.py --project projects/<slug>`
 7. `python scripts/check_brief.py --project projects/<slug>`
 8. `python pipelines/reel_compose.py --project projects/<slug> --preview`
@@ -68,16 +68,16 @@ Do not retry in a loop waiting for them. After they confirm login, continue.
 
 Messy Spanish is expected. Map it; do not make her rewrite.
 
-- Photo in the row → `kind: sticker`, `file: overlays/<name>.png`. Rename `foto_7.png` to a Spanish stem (`frutero_alto.png`) from the note.
+- Photo in the row → `kind: sticker`, `file: overlays/<name>.png`. Rename `foto_7.png` to a Spanish stem (`frutero_alto.png`) from the note. She may paste a JPEG or a huge Google image; import saves a PNG and compose fits it in the box.
+- Size words in «Qué quieres»: **grande** → 480×340, **mediano** (default, or «no tan grande») → 400×340, **chico** / pequeño / chiquito / más chica → 320×260. Do not ask her for `max_w`. Override in YAML only if preview looks wrong.
 - No photo + her name / “Dra. Angélica” → `brush_label`, `hook_center`, `font_size: 72`.
 - No photo + “Medicina Familiar” → `brush_label`, `hook_center`, `font_size: 66`, right after the name.
 - No photo + “enfoque integral” / bio-psico-social → `enfoque_lockup`, `hook_center`. No PNG.
 - “derecha” / “a la derecha” → `right`. “izquierda” → `left`. “arriba” / “cielo” / “gancho” → `hook_center`.
 - “se suma” / “también” / two things at once = two overlays that overlap (frutero right + susto left). Same PNG may appear twice (susto).
 - Endcard / WhatsApp card: never in her table; brand pack adds it after `talk_end`.
-- Sticker sizes: copy nearby values from `examples/ya_tienes/brief.yaml` (typically `max_h` 280–340, `max_w` 400–480).
 
-Times are **source clock** (her recording). `trim_start` is “Cortar al inicio”. Final time = source − trim. Do not retune against the published Instagram file.
+Times are **source clock** (her recording). She writes ``1:29,5`` or ``10:25,5`` (minutes:seconds, tenths with a comma). Not frames — captions come from Gemini. `trim_start` is “Cortar al inicio”. Final time = source − trim. Do not retune against the published Instagram file.
 
 ## Locked compose (do not regress)
 

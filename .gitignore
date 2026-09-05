@@ -42,7 +42,13 @@ htmlcov/
 *.log
 logs/
 
-# Excel briefs with embedded pictures are generated locally
+# Local spreadsheet dumps (Excel plantilla is the only committed workbook).
+# CSV twins can exist on disk for import_brief; never commit them.
 *.xlsx
 *.csv
+*.CSV
 !templates/angelica_brief/plantilla_reel_angelica.xlsx
+
+#projects folder, auth folder
+projects/
+ 

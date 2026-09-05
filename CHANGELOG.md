@@ -48,6 +48,23 @@ Add an entry for every meaningful change as soon as it lands (or when opening th
 
 ### Logs
 
+#### 2026-09-05 — Change — Sheet times are ``1:29,5``; Instrucciones tab
+
+- **Author:** Thorsten
+- **Area:** `modules/video/timing.py`, `scripts/generate_template_xlsx.py`, `templates/angelica_brief/`
+- **Description:** Angélica writes minutes:seconds with a comma for tenths (`1:29,5`, `10:25,5`). Not frames — karaoke captions are generated. Desde/Hasta cells are Excel **text** so `0:28` is not turned into a clock time. Workbook has a second tab, **Instrucciones**, from `00_instrucciones.txt`.
+- **Rationale:** Frame timestamps are unused precision. A Spanish comma also stops Excel treating the cell as time-of-day.
+- **Impact:** Import already accepted commas. Filled examples now show `0:05,5` instead of `0:05.50`. `python scripts/test_timing.py` covers the sheet format.
+- **Links:** [Angélica brief](documentation/guides/angelica_brief.md) · [plantilla](templates/angelica_brief/README.md)
+
+#### 2026-09-05 — Change — She describes sticker size in words; compose fits any paste
+
+- **Author:** Thorsten
+- **Area:** `modules/brief/sticker_size.py`, `modules/brief/sheet_import.py`, `modules/video/image_ops.py`, `modules/video/overlays.py`, `brands/dra_angelica/brand.yaml`, `templates/angelica_brief/`
+- **Description:** «Qué quieres» can say **grande / mediano / chico** (also más chica, chiquito, no tan grande). Import maps that to `max_w`/`max_h`. She pastes any JPEG/PNG at any pixel size — Excel's cell thumbnail is ignored; compose contain-fits the file into the box. Default is mediano. Locked YAML that already has pixel sizes is unchanged.
+- **Rationale:** She will not crop images to 480×340. How big it should *look* belongs in the same sentence as derecha/izquierda.
+- **Impact:** New sheets get sizes without the agent inventing pixels. `python scripts/test_sticker_size.py` checks the word map.
+
 #### 2026-09-05 — Change — Example «Ya tienes» Excel now reads as Angélica would fill it
 
 - **Author:** Thorsten

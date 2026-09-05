@@ -3,8 +3,9 @@ Convert Angélica's spreadsheet (CSV folder or xlsx) into a first-pass ``brief.y
 
 The one-tab Excel (Desde / Hasta / Foto / Qué quieres) is what she fills, in
 her own words. Import is a sketch: Cursor amends it to engine-ready YAML
-(kinds, placements, sizes) using ``.cursor/skills/angelica-reel-brief``.
-Legacy multi-tab CSV/xlsx still works.
+(kinds, placements) using ``.cursor/skills/angelica-reel-brief``. Size words
+(grande / mediano / chico) become ``max_w`` / ``max_h``. Legacy multi-tab
+CSV/xlsx still works.
 """
 
 from __future__ import annotations
@@ -14,6 +15,7 @@ from pathlib import Path
 from typing import Any
 
 from modules.brief.brief_loader import write_brief_yaml
+from modules.brief.sticker_size import sticker_box_for_notes
 from modules.video.timing import parse_timestamp_to_seconds
 
 
@@ -223,6 +225,10 @@ def overlays_from_rows(rows: list[dict[str, str]]) -> list[dict[str, Any]]:
             overlay["max_w"] = int(float(row["ancho_max"]))
         if row.get("alto_max"):
             overlay["max_h"] = int(float(row["alto_max"]))
+        if kind == "sticker" and ("max_w" not in overlay or "max_h" not in overlay):
+            max_width, max_height, _size_name = sticker_box_for_notes(notes or "")
+            overlay.setdefault("max_w", max_width)
+            overlay.setdefault("max_h", max_height)
         if row.get("tamano_fuente") or row.get("font_size"):
             overlay["font_size"] = int(
                 float(row.get("tamano_fuente") or row["font_size"])
@@ -423,6 +429,8 @@ def extract_xlsx_images_to_overlays(
     """
     import hashlib
 
+    from modules.video.image_ops import save_pasted_overlay_png
+
     located = _overlay_sheet_and_header(workbook)
     if located is None:
         return {}
@@ -458,11 +466,13 @@ def extract_xlsx_images_to_overlays(
         if file_column:
             stated_name = str(sheet.cell(row_index, file_column).value or "").strip()
         file_name = Path(stated_name).name if stated_name else f"foto_{row_index}.png"
-        if not file_name.lower().endswith((".png", ".jpg", ".jpeg", ".webp")):
-            file_name = f"{file_name}.png"
-        (overlays_directory / file_name).write_bytes(payload)
-        digest_to_name[digest] = file_name
-        row_to_name[row_index] = file_name
+        png_name = Path(file_name).with_suffix(".png").name
+        try:
+            save_pasted_overlay_png(payload, overlays_directory / png_name)
+        except ValueError:
+            (overlays_directory / png_name).write_bytes(payload)
+        digest_to_name[digest] = png_name
+        row_to_name[row_index] = png_name
     return row_to_name
 
 

@@ -10,12 +10,13 @@ Used by brief loading (spreadsheet cells) and the compose renderer (easing).
 
 from __future__ import annotations
 
+import datetime
 import re
 from typing import Any
 
 
-# Spreadsheet cells arrive as ``24``, ``0:24.80``, or ``1:29.5``. Commas are
-# treated as decimals because Spanish locales type ``24,5``.
+# Spreadsheet cells arrive as ``24``, ``0:24``, ``1:29,5``, or ``10:25,5``.
+# Commas are decimals (Spanish). Tenths are enough; she does not mark frames.
 TIMESTAMP_PATTERN = re.compile(
     r"^\s*(?:(?P<hours>\d+):)?(?P<minutes>\d+):(?P<seconds>\d+(?:\.\d+)?)\s*$"
     r"|^\s*(?P<plain_seconds>\d+(?:\.\d+)?)\s*$"
@@ -25,9 +26,9 @@ TIMESTAMP_PATTERN = re.compile(
 def parse_timestamp_to_seconds(value: Any) -> float:
     """Parse a brief/spreadsheet timestamp into seconds on the source clock.
 
-    Accepts ``24``, ``24.5``, ``0:24``, ``0:24.80``, ``1:29.5``, and ``0:01:29.5``.
-    Numeric cells from Excel/Sheets pass through as seconds (they are already
-    floats, not Excel serial dates).
+    Accepts ``24``, ``24,5``, ``0:24``, ``1:29,5``, ``10:25,5`` (10 min 25.5 s),
+    and the same with a period. Numeric cells pass through as seconds.
+    ``datetime.time`` from Excel is read as h:mm:ss of a day.
 
     Args:
         value: Raw cell or YAML scalar.
@@ -40,16 +41,25 @@ def parse_timestamp_to_seconds(value: Any) -> float:
     """
     if value is None or value == "":
         raise ValueError("Empty timestamp")
-    if isinstance(value, (int, float)):
+    if isinstance(value, (int, float)) and not isinstance(value, bool):
         return float(value)
-    # Spanish Google Sheets often uses a comma decimal separator.
+    if isinstance(value, datetime.datetime):
+        value = value.time()
+    if isinstance(value, datetime.time):
+        return (
+            value.hour * 3600.0
+            + value.minute * 60.0
+            + value.second
+            + value.microsecond / 1_000_000.0
+        )
+    # Spanish sheets use a comma decimal: ``1:29,5`` → 89.5s.
     text = str(value).strip().replace(",", ".")
     if not text:
         raise ValueError("Empty timestamp")
     match = TIMESTAMP_PATTERN.match(text)
     if not match:
         raise ValueError(
-            f"Cannot parse timestamp {value!r}. Use seconds (22.8) or m:ss (0:22.80)."
+            f"Cannot parse timestamp {value!r}. Use m:ss or m:ss,d (1:29,5)."
         )
     if match.group("plain_seconds") is not None:
         return float(match.group("plain_seconds"))
@@ -60,7 +70,7 @@ def parse_timestamp_to_seconds(value: Any) -> float:
 
 
 def format_seconds_as_timestamp(total_seconds: float) -> str:
-    """Format seconds as ``m:ss.xx`` for briefs, logs, and preview filenames.
+    """Format seconds as ``m:ss.xx`` for engine logs and preview filenames.
 
     Args:
         total_seconds: Duration or source-clock time.
@@ -74,6 +84,28 @@ def format_seconds_as_timestamp(total_seconds: float) -> str:
     minutes = int(total_seconds // 60)
     remainder = total_seconds - minutes * 60
     return f"{minutes}:{remainder:05.2f}"
+
+
+def format_seconds_as_sheet_timestamp(total_seconds: float) -> str:
+    """Format seconds the way Angélica writes them: ``m:ss`` or ``m:ss,d``.
+
+    Tenths only (``1:29,5``). No frame counts. Comma decimal, as on a
+    Spanish keyboard.
+
+    Args:
+        total_seconds: Duration or source-clock time.
+
+    Returns:
+        String such as ``0:28`` or ``10:25,5``.
+    """
+    if total_seconds < 0:
+        total_seconds = 0.0
+    tenths = int(total_seconds * 10.0 + 0.5)
+    minutes, tenths_in_minute = divmod(tenths, 600)
+    seconds, tenth = divmod(tenths_in_minute, 10)
+    if tenth:
+        return f"{minutes}:{seconds:02d},{tenth}"
+    return f"{minutes}:{seconds:02d}"
 
 
 def convert_source_time_to_final_time(

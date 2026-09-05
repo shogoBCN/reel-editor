@@ -27,6 +27,11 @@ sticker:
   inset: 18
   # Same Y as the dual fruit-bowl slot — never centre on her head (reads as a hat).
   y_from_top_safe: 8
+  # On-screen boxes. She writes grande / mediano / chico — never pixels.
+  sizes:
+    grande: {max_w: 480, max_h: 340}
+    mediano: {max_w: 400, max_h: 340}
+    chico: {max_w: 320, max_h: 260}
 
 captions:
   size: 56

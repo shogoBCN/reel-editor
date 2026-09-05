@@ -1,5 +1,5 @@
 """
-Build Angélica's one-page Excel brief.
+Build Angélica's Excel brief (Brief + Instrucciones).
 
 She fills three fields at the top and one row per overlay (times, photo,
 natural-language «Qué quieres»). Cursor turns that into brief.yaml.
@@ -22,17 +22,23 @@ from pathlib import Path
 REPOSITORY_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPOSITORY_ROOT))
 
-from modules.video.timing import format_seconds_as_timestamp, parse_timestamp_to_seconds
+from modules.video.timing import (
+    format_seconds_as_sheet_timestamp,
+    parse_timestamp_to_seconds,
+)
 
 HEADER_ROW = 6
 FIRST_DATA_ROW = 7
 BLANK_DATA_ROWS = 12
+INSTRUCTIONS_PATH = REPOSITORY_ROOT / "templates" / "angelica_brief" / "00_instrucciones.txt"
+TEXT_NUMBER_FORMAT = "@"
 
 HINT = (
-    "Escribe con tus palabras. Reloj = TU video, no Instagram. "
-    "Pega la foto en Foto. En «Qué quieres» di qué se ve y dónde "
-    "(derecha / izquierda / arriba). Si dos fotos se ven juntas, son dos filas. "
-    "Cursor arma el reel."
+    "Tiempos: 1:29,5 (minutos:segundos, décimos con coma). "
+    "No hace falta al frame. Reloj = TU video. "
+    "Pega la foto del tamaño que sea. En «Qué quieres»: qué se ve, "
+    "dónde (derecha / izquierda / arriba) y tamaño (grande / mediano / chico). "
+    "Dos fotos juntas = dos filas. Ver pestaña Instrucciones."
 )
 
 
@@ -57,12 +63,54 @@ def _project_fields_from_csv(csv_directory: Path) -> dict[str, str]:
             fields["cortar_inicio"] = value
         elif key == "fin_de_habla":
             try:
-                fields["fin_de_habla"] = format_seconds_as_timestamp(
+                fields["fin_de_habla"] = format_seconds_as_sheet_timestamp(
                     parse_timestamp_to_seconds(value)
                 )
             except ValueError:
                 fields["fin_de_habla"] = value
     return fields
+
+
+def _sheet_time_cell(raw: str) -> str:
+    """Show a CSV timestamp as Angélica writes it (``1:29,5``)."""
+    text = (raw or "").strip()
+    if not text:
+        return ""
+    try:
+        return format_seconds_as_sheet_timestamp(parse_timestamp_to_seconds(text))
+    except ValueError:
+        return text
+
+
+def _instruction_blocks() -> list[tuple[str, str]]:
+    """Load heading/body pairs for the Instrucciones tab.
+
+    Returns:
+        ``("heading"|"body", text)`` rows. Skips the markdown ``#`` title.
+    """
+    if not INSTRUCTIONS_PATH.is_file():
+        return [("body", HINT)]
+    raw = INSTRUCTIONS_PATH.read_text(encoding="utf-8").strip()
+    blocks: list[tuple[str, str]] = []
+    for chunk in raw.split("\n\n"):
+        lines = [line.rstrip() for line in chunk.splitlines() if line.strip()]
+        if not lines:
+            continue
+        if lines[0].startswith("# ") and not blocks:
+            continue
+        if lines[0].startswith("## "):
+            blocks.append(("heading", lines[0][3:].strip()))
+            lines = lines[1:]
+            if not lines:
+                continue
+        cleaned = []
+        for line in lines:
+            if line.startswith("- "):
+                cleaned.append("• " + line[2:].strip())
+            else:
+                cleaned.append(line.strip())
+        blocks.append(("body", "\n".join(cleaned)))
+    return blocks or [("body", HINT)]
 
 
 def _overlay_rows_from_csv(csv_directory: Path) -> list[dict[str, str]]:
@@ -101,8 +149,8 @@ def _overlay_rows_from_csv(csv_directory: Path) -> list[dict[str, str]]:
             want = nota
         simple.append(
             {
-                "desde": (row.get("tiempo_inicio") or "").strip(),
-                "hasta": (row.get("tiempo_fin") or "").strip(),
+                "desde": _sheet_time_cell((row.get("tiempo_inicio") or "").strip()),
+                "hasta": _sheet_time_cell((row.get("tiempo_fin") or "").strip()),
                 "archivo": file_name,
                 "quieres": want.strip(),
             }
@@ -115,7 +163,7 @@ def generate_xlsx(
     csv_directory: Path | None = None,
     overlay_directory: Path | None = None,
 ) -> Path:
-    """Write the one-tab workbook Angélica fills.
+    """Write Angélica's workbook: Brief tab plus Instrucciones.
 
     Args:
         destination: Output ``.xlsx``.
@@ -159,6 +207,7 @@ def generate_xlsx(
     sheet["B2"] = fields["cortar_inicio"]
     sheet["A3"] = "Terminas de hablar (reloj de TU video)"
     sheet["B3"] = fields["fin_de_habla"]
+    sheet["B3"].number_format = TEXT_NUMBER_FORMAT
     for row_index in (1, 2, 3):
         sheet.cell(row_index, 1).font = label_font
         sheet.merge_cells(
@@ -169,7 +218,7 @@ def generate_xlsx(
     sheet["A4"] = HINT
     sheet["A4"].font = hint_font
     sheet["A4"].alignment = Alignment(wrap_text=True, vertical="center")
-    sheet.row_dimensions[4].height = 48
+    sheet.row_dimensions[4].height = 72
 
     headers = ["Desde", "Hasta", "Foto", "Qué quieres"]
     for column_index, title in enumerate(headers, start=1):
@@ -186,12 +235,16 @@ def generate_xlsx(
     for offset in range(data_count):
         excel_row = FIRST_DATA_ROW + offset
         sheet.row_dimensions[excel_row].height = 88
-        for column_index in (1, 2, 4):
+        for column_index in (1, 2):
+            sheet.cell(excel_row, column_index).number_format = TEXT_NUMBER_FORMAT
             sheet.cell(excel_row, column_index).alignment = wrap
+        sheet.cell(excel_row, 4).alignment = wrap
         if offset < len(overlay_rows):
             item = overlay_rows[offset]
             sheet.cell(excel_row, 1, item["desde"])
             sheet.cell(excel_row, 2, item["hasta"])
+            sheet.cell(excel_row, 1).number_format = TEXT_NUMBER_FORMAT
+            sheet.cell(excel_row, 2).number_format = TEXT_NUMBER_FORMAT
             sheet.cell(excel_row, 4, item["quieres"])
             png_name = item.get("archivo") or ""
             png_path = (
@@ -211,14 +264,51 @@ def generate_xlsx(
     sheet.row_dimensions[3].height = 22
     sheet.row_dimensions[HEADER_ROW].height = 22
 
+    _write_instructions_sheet(workbook)
+    workbook.active = 0
+
     destination.parent.mkdir(parents=True, exist_ok=True)
     workbook.save(destination)
     return destination
 
 
+def _write_instructions_sheet(workbook) -> None:
+    """Add the Instrucciones tab from ``00_instrucciones.txt``."""
+    from openpyxl.styles import Alignment, Font, PatternFill
+
+    sheet = workbook.create_sheet("Instrucciones")
+    header_fill = PatternFill("solid", fgColor="068A93")
+    header_font = Font(bold=True, color="FFFFFF", size=14)
+    heading_font = Font(bold=True, color="068A93", size=12)
+    body_font = Font(size=12, color="333333")
+    wrap = Alignment(wrap_text=True, vertical="top")
+
+    sheet.merge_cells("A1:B1")
+    sheet["A1"] = "Cómo llenar el Brief"
+    sheet["A1"].fill = header_fill
+    sheet["A1"].font = header_font
+    sheet["A1"].alignment = Alignment(wrap_text=True, vertical="center")
+    sheet.row_dimensions[1].height = 28
+    sheet.column_dimensions["A"].width = 88
+    sheet.column_dimensions["B"].width = 12
+
+    excel_row = 3
+    for kind, text in _instruction_blocks():
+        sheet.merge_cells(
+            start_row=excel_row, start_column=1, end_row=excel_row, end_column=2
+        )
+        cell = sheet.cell(excel_row, 1, text)
+        cell.alignment = wrap
+        cell.font = heading_font if kind == "heading" else body_font
+        line_count = text.count("\n") + 1
+        sheet.row_dimensions[excel_row].height = max(22, 18 * line_count + 8)
+        excel_row += 1 if kind == "heading" else 2
+
+
+
 def main() -> None:
     """Write the blank template, or a filled brief from CSV + PNGs."""
-    parser = argparse.ArgumentParser(description="Build Angélica's one-page Excel brief")
+    parser = argparse.ArgumentParser(description="Build Angélica's Excel brief (Brief + Instrucciones)")
     parser.add_argument("--csv-dir", help="Folder with 01_proyecto.csv and 02_imagenes_y_tiempos.csv")
     parser.add_argument("--overlays", help="PNG folder to embed in Foto")
     parser.add_argument(

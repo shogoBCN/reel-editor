@@ -37,9 +37,12 @@ def main() -> None:
     expect(24, 24.0)
     expect(24.5, 24.5)
     expect("24", 24.0)
+    expect("24,5", 24.5)
     expect("0:24", 24.0)
     expect("0:24.80", 24.80)
     expect("1:29.5", 89.5)
+    expect("1:29,5", 89.5)
+    expect("10:25,5", 625.5)
     expect("0:01:29.5", 89.5)
     expect("1:06.20", 66.20)
     expect("1:20.00", 80.0)
@@ -48,6 +51,18 @@ def main() -> None:
     formatted = format_seconds_as_timestamp(89.5)
     if formatted != "1:29.50":
         raise SystemExit(f"format_seconds_as_timestamp 89.5 -> {formatted}")
+    from modules.video.timing import format_seconds_as_sheet_timestamp
+
+    if format_seconds_as_sheet_timestamp(89.5) != "1:29,5":
+        raise SystemExit("sheet timestamp 89.5")
+    if format_seconds_as_sheet_timestamp(28.0) != "0:28":
+        raise SystemExit("sheet timestamp 28")
+    if format_seconds_as_sheet_timestamp(625.5) != "10:25,5":
+        raise SystemExit("sheet timestamp 625.5")
+    if format_seconds_as_sheet_timestamp(5.5) != "0:05,5":
+        raise SystemExit("sheet timestamp 5.5")
+    if format_seconds_as_sheet_timestamp(7.45) != "0:07,5":
+        raise SystemExit("sheet timestamp 7.45")
     print("timing ok")
 
 

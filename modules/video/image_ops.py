@@ -7,10 +7,11 @@ Nothing in this module knows about briefs or brands — it only paints pixels.
 
 from __future__ import annotations
 
+from io import BytesIO
 from pathlib import Path
 
 import numpy as np
-from PIL import Image, ImageFilter
+from PIL import Image, ImageFilter, ImageOps
 
 
 def add_drop_shadow(
@@ -51,21 +52,55 @@ def add_drop_shadow(
     return canvas
 
 
+def save_pasted_overlay_png(payload: bytes, destination: Path) -> Path:
+    """Decode a pasted Excel photo (JPEG/PNG/WebP) and write a PNG.
+
+    Excel cell display size is ignored — ``payload`` is the embedded file.
+    On-screen size is a later compose step (``load_fitted_sticker``).
+
+    Args:
+        payload: Raw bytes from the workbook drawing.
+        destination: Path whose suffix is forced to ``.png``.
+
+    Returns:
+        Path written.
+
+    Raises:
+        ValueError: Bytes are not an image Pillow can open.
+    """
+    destination = Path(destination).with_suffix(".png")
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        image = Image.open(BytesIO(payload))
+        image = ImageOps.exif_transpose(image) or image
+        image.convert("RGBA").save(destination, "PNG")
+    except Exception as exc:
+        raise ValueError("Could not read a pasted overlay image") from exc
+    return destination
+
+
 def load_fitted_sticker(
     path: Path | str, max_width: int, max_height: int
 ) -> Image.Image:
-    """Load a PNG, fit it in a max box, and add a sticker shadow.
+    """Load a photo, fit it in a max box, and add a sticker shadow.
+
+    Source pixel size does not matter (phone screenshot or a 4K Google image).
+    The box comes from her size words (grande / mediano / chico) via the brief.
 
     Args:
         path: Overlay file (already keyed if the source had a black background).
-        max_width: Box width in pixels, including later shadow padding.
+        max_width: Box width in pixels, before drop-shadow padding.
         max_height: Box height in pixels. Keep ≤ ~340 so stickers stay in the
             crown slot above her eyes and below the IG crop.
 
     Returns:
         RGBA sticker ready to composite.
     """
-    image = Image.open(path).convert("RGBA")
+    image = Image.open(path)
+    image = ImageOps.exif_transpose(image) or image
+    image = image.convert("RGBA")
+    if image.width < 1 or image.height < 1:
+        raise ValueError(f"Empty overlay image: {path}")
     scale = min(max_width / image.width, max_height / image.height)
     new_width = max(1, int(image.width * scale))
     new_height = max(1, int(image.height * scale))

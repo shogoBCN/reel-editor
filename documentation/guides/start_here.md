@@ -41,6 +41,7 @@ conda activate angelica-website
 pip install -r requirements.txt
 
 python scripts/test_timing.py
+python scripts/test_sticker_size.py
 python scripts/check_brief.py --project examples/ya_tienes
 python pipelines/reel_compose.py --project examples/ya_tienes --preview
 ```

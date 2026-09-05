@@ -17,6 +17,7 @@ import yaml
 from PIL import Image, ImageDraw, ImageFont
 
 from config.config_store import ConfigStore
+from modules.brief.sticker_size import DEFAULT_STICKER_SIZE_BOXES
 from modules.video.image_ops import add_drop_shadow, shrink_overlay_to_max_width
 
 
@@ -40,6 +41,7 @@ class BrandPack:
     endcard_path: Path
     sticker_inset: int
     sticker_y_from_top_safe: int
+    sticker_size_boxes: dict[str, tuple[int, int]]
     caption_size: int
     caption_baseline_y: int
     enfoque_title: str
@@ -123,6 +125,18 @@ def load_brand_pack(brand_id: str, config_store: ConfigStore) -> BrandPack:
     ]
     parts = [(str(item["text"]), str(item.get("colour", "white"))) for item in parts_raw]
 
+    size_boxes = dict(DEFAULT_STICKER_SIZE_BOXES)
+    for size_name, spec in (sticker.get("sizes") or {}).items():
+        if not isinstance(spec, dict):
+            continue
+        fallback_width, fallback_height = size_boxes.get(
+            str(size_name), DEFAULT_STICKER_SIZE_BOXES["mediano"]
+        )
+        size_boxes[str(size_name)] = (
+            int(spec.get("max_w", fallback_width)),
+            int(spec.get("max_h", fallback_height)),
+        )
+
     return BrandPack(
         brand_id=brand_id,
         root=brand_directory,
@@ -144,6 +158,7 @@ def load_brand_pack(brand_id: str, config_store: ConfigStore) -> BrandPack:
         sticker_inset=int(sticker.get("inset", 18)),
         # Same Y as the dual fruit-bowl slot — never centre on her head (hat).
         sticker_y_from_top_safe=int(sticker.get("y_from_top_safe", 8)),
+        sticker_size_boxes=size_boxes,
         caption_size=int(captions.get("size", 56)),
         # Coat V / cleavage: below the chin, above organic Reels UI (~Y 1528).
         caption_baseline_y=int(captions.get("y", 1528)),

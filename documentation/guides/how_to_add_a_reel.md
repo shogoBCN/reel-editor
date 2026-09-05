@@ -17,7 +17,7 @@ Copy `examples/ya_tienes/` as a starting point. Source `.mp4` is gitignored — 
 
 ## 2. Brief
 
-She fills the [one-tab Excel](../../templates/angelica_brief/README.md) (`Desde` / `Hasta` / `Foto` / `Qué quieres`). Import is a sketch; amend YAML to match `examples/ya_tienes/brief.yaml` (skill `.cursor/skills/angelica-reel-brief`):
+She fills the [one-tab Excel](../../templates/angelica_brief/README.md) (`Desde` / `Hasta` / `Foto` / `Qué quieres`). Photos can be any pixel size; she describes **grande / mediano / chico**. Import is a sketch; amend YAML to match `examples/ya_tienes/brief.yaml` (skill `.cursor/skills/angelica-reel-brief`):
 
 ```bash
 conda activate angelica-website

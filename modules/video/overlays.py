@@ -23,6 +23,7 @@ from modules.video.brand_style import (
     make_brush_label,
     make_enfoque_lockup,
 )
+from modules.brief.sticker_size import DEFAULT_STICKER_SIZE_BOXES
 from modules.video.image_ops import composite_image_onto_frame, load_fitted_sticker
 from modules.video.timing import compute_edge_fade_opacity, compute_pop_in_scale
 
@@ -156,8 +157,11 @@ def build_overlay_layers(
                 path = project_dir / path
             if not path.is_file():
                 raise FileNotFoundError(f"Overlay {overlay_id}: missing file {path}")
-            max_width = int(row.get("max_w") or 400)
-            max_height = int(row.get("max_h") or 340)
+            default_width, default_height = brand.sticker_size_boxes.get(
+                "mediano", DEFAULT_STICKER_SIZE_BOXES["mediano"]
+            )
+            max_width = int(row.get("max_w") or default_width)
+            max_height = int(row.get("max_h") or default_height)
             image = load_fitted_sticker(path, max_width, max_height)
         else:
             raise ValueError(
