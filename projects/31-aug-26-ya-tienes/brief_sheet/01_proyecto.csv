@@ -1,0 +1,13 @@
+clave,valor,notas
+slug,31-aug-26-ya-tienes,sin espacios ni tildes
+titulo,Ya tienes — medicina familiar,título humano
+marca,dra_angelica,no cambiar
+idioma,es,
+video,source/talking_head.mp4,archivo del video en source/
+transcripcion,source/transcript.json,Gemini word timestamps
+cortar_inicio,4.0,silencio / arranque falso al inicio de TU video
+fin_de_habla,89.5,cuando terminas de hablar (reloj de TU video)
+fundido_blanco,0.70,fundido a blanco antes de la tarjeta
+tarjeta_final,2.00,segundos de la tarjeta de contacto
+archivo_salida,31-aug-26-ya-tienes_final.mp4,mp4 final
+subtitulos,si,si / no

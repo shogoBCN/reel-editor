@@ -1,12 +1,19 @@
 """
-Build the Angélica-facing xlsx from the CSV template tabs.
+Build Angélica's one-page Excel brief.
 
-One workbook is easier to File → Import into Google Sheets than four CSVs.
-Run from repo root: python scripts/generate_template_xlsx.py
+She fills three fields at the top and one row per overlay (time, photo or
+text, left/right/up). Run from repo root:
+
+    python scripts/generate_template_xlsx.py
+    python scripts/generate_template_xlsx.py \\
+        --csv-dir projects/<slug>/brief_sheet \\
+        --overlays projects/<slug>/overlays \\
+        --out projects/<slug>/BRIEF_Angelica.xlsx
 """
 
 from __future__ import annotations
 
+import argparse
 import csv
 import sys
 from pathlib import Path
@@ -14,25 +21,91 @@ from pathlib import Path
 REPOSITORY_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPOSITORY_ROOT))
 
+from modules.video.timing import format_seconds_as_timestamp, parse_timestamp_to_seconds
 
-def read_csv_matrix(path: Path) -> list[list[str]]:
-    """Load a CSV as a list of rows (including the header).
+HEADER_ROW = 6
+FIRST_DATA_ROW = 7
+BLANK_DATA_ROWS = 12
 
-    Args:
-        path: UTF-8 CSV (BOM-safe).
+HINT = (
+    "Tiempos = TU video original (no Instagram). "
+    "Pega la foto en Foto. Lado: derecha, izquierda o arriba. "
+    "Sin foto = título en el cielo (escribe Texto). "
+    "La tarjeta de WhatsApp del final se pone sola."
+)
 
-    Returns:
-        Rows of string cells.
-    """
+
+def _read_csv_rows(path: Path) -> list[dict[str, str]]:
+    """Load a UTF-8 CSV as dicts (BOM-safe)."""
     with path.open(encoding="utf-8-sig", newline="") as handle:
-        return [list(row) for row in csv.reader(handle)]
+        return list(csv.DictReader(handle))
 
 
-def generate_xlsx(destination: Path) -> Path:
-    """Write the multi-tab workbook with dropdowns for ``tipo`` and ``lado``.
+def _project_fields_from_csv(csv_directory: Path) -> dict[str, str]:
+    """Read título / cortar_inicio / fin_de_habla from 01_proyecto.csv."""
+    path = csv_directory / "01_proyecto.csv"
+    fields = {"titulo": "", "cortar_inicio": "4", "fin_de_habla": ""}
+    if not path.is_file():
+        return fields
+    for row in _read_csv_rows(path):
+        key = (row.get("clave") or "").strip().lower()
+        value = (row.get("valor") or "").strip()
+        if key == "titulo":
+            fields["titulo"] = value
+        elif key == "cortar_inicio":
+            fields["cortar_inicio"] = value
+        elif key == "fin_de_habla":
+            try:
+                fields["fin_de_habla"] = format_seconds_as_timestamp(
+                    parse_timestamp_to_seconds(value)
+                )
+            except ValueError:
+                fields["fin_de_habla"] = value
+    return fields
+
+
+def _overlay_rows_from_csv(csv_directory: Path) -> list[dict[str, str]]:
+    """Flatten the detailed overlay CSV into the six columns she sees."""
+    path = csv_directory / "02_imagenes_y_tiempos.csv"
+    if not path.is_file():
+        return []
+    simple: list[dict[str, str]] = []
+    for row in _read_csv_rows(path):
+        kind = (row.get("tipo") or "").strip().lower()
+        side = (row.get("lado") or "").strip().lower()
+        if side in ("gancho", "centro", "hook"):
+            side = "arriba"
+        text = (row.get("texto") or "").strip()
+        file_name = (row.get("archivo_imagen") or "").strip()
+        if kind == "enfoque":
+            text = text or "ENFOQUE INTEGRAL"
+            file_name = ""
+        if kind == "etiqueta":
+            file_name = ""
+        simple.append(
+            {
+                "desde": (row.get("tiempo_inicio") or "").strip(),
+                "hasta": (row.get("tiempo_fin") or "").strip(),
+                "archivo": file_name,
+                "texto": text,
+                "lado": side,
+                "nota": (row.get("que_es") or "").strip(),
+            }
+        )
+    return simple
+
+
+def generate_xlsx(
+    destination: Path,
+    csv_directory: Path | None = None,
+    overlay_directory: Path | None = None,
+) -> Path:
+    """Write the one-tab workbook Angélica fills.
 
     Args:
-        destination: ``plantilla_reel_angelica.xlsx``.
+        destination: Output ``.xlsx``.
+        csv_directory: Optional filled ``01_`` / ``02_`` CSVs to pre-populate.
+        overlay_directory: PNGs to embed in the Foto column.
 
     Returns:
         Path written.
@@ -42,71 +115,97 @@ def generate_xlsx(destination: Path) -> Path:
     """
     try:
         from openpyxl import Workbook
+        from openpyxl.drawing.image import Image as ExcelImage
         from openpyxl.styles import Alignment, Font, PatternFill
         from openpyxl.utils import get_column_letter
         from openpyxl.worksheet.datavalidation import DataValidation
     except ImportError as exc:
         raise ImportError("pip install openpyxl") from exc
 
-    template_dir = REPOSITORY_ROOT / "templates" / "angelica_brief"
-    instructions = (template_dir / "README.md").read_text(encoding="utf-8")
+    fields = (
+        _project_fields_from_csv(csv_directory)
+        if csv_directory
+        else {"titulo": "", "cortar_inicio": "4", "fin_de_habla": ""}
+    )
+    overlay_rows = _overlay_rows_from_csv(csv_directory) if csv_directory else []
+
     header_fill = PatternFill("solid", fgColor="068A93")
     header_font = Font(bold=True, color="FFFFFF")
-    wrap = Alignment(wrap_text=True, vertical="top")
+    label_font = Font(bold=True, color="068A93")
+    hint_font = Font(italic=True, color="666666", size=11)
+    wrap = Alignment(wrap_text=True, vertical="center")
 
     workbook = Workbook()
+    sheet = workbook.active
+    sheet.title = "Brief"
 
-    instructions_sheet = workbook.active
-    instructions_sheet.title = "Instrucciones"
-    instructions_sheet["A1"] = instructions
-    instructions_sheet["A1"].alignment = Alignment(wrap_text=True, vertical="top")
-    instructions_sheet.column_dimensions["A"].width = 110
-    instructions_sheet.row_dimensions[1].height = 420
+    sheet["A1"] = "Título"
+    sheet["B1"] = fields["titulo"]
+    sheet["A2"] = "Cortar al inicio (segundos)"
+    sheet["B2"] = fields["cortar_inicio"]
+    sheet["A3"] = "Terminas de hablar (reloj de TU video)"
+    sheet["B3"] = fields["fin_de_habla"]
+    for row_index in (1, 2, 3):
+        sheet.cell(row_index, 1).font = label_font
+        sheet.merge_cells(start_row=row_index, start_column=2, end_row=row_index, end_column=6)
 
-    tabs = [
-        ("Proyecto", "01_proyecto.csv", 18, 40, 55),
-        ("Imagenes_y_tiempos", "02_imagenes_y_tiempos.csv", 16, 14, 18),
-        ("Correcciones", "03_correcciones_transcripcion.csv", 24, 24, 50),
-        ("Notas_edicion", "04_notas_edicion.csv", 18, 80),
-    ]
-    for title, filename, *widths in tabs:
-        rows = read_csv_matrix(template_dir / filename)
-        sheet = workbook.create_sheet(title)
-        for row_index, row in enumerate(rows, start=1):
-            for column_index, value in enumerate(row, start=1):
-                cell = sheet.cell(row_index, column_index, value)
-                cell.alignment = wrap
-                if row_index == 1:
-                    cell.fill = header_fill
-                    cell.font = header_font
-        sheet.freeze_panes = "A2"
-        sheet.auto_filter.ref = sheet.dimensions
-        for column_index, width in enumerate(widths, start=1):
-            sheet.column_dimensions[get_column_letter(column_index)].width = width
-        # Remaining columns get a readable default so notes are not cramped.
-        for column in range(len(widths) + 1, max(len(row) for row in rows) + 1):
-            sheet.column_dimensions[get_column_letter(column)].width = 22
+    sheet.merge_cells("A4:F4")
+    sheet["A4"] = HINT
+    sheet["A4"].font = hint_font
+    sheet["A4"].alignment = Alignment(wrap_text=True, vertical="center")
+    sheet.row_dimensions[4].height = 36
 
-    images_sheet = workbook["Imagenes_y_tiempos"]
-    kind_validation = DataValidation(
-        type="list",
-        formula1='"sticker,etiqueta,enfoque"',
-        allow_blank=True,
-    )
-    kind_validation.error = "Usa sticker, etiqueta o enfoque"
-    kind_validation.prompt = "sticker = PNG, etiqueta = pincel + texto, enfoque = lockup generado"
-    images_sheet.add_data_validation(kind_validation)
-    kind_validation.add("D2:D200")
+    headers = ["Desde", "Hasta", "Foto", "Texto", "Lado", "Nota"]
+    for column_index, title in enumerate(headers, start=1):
+        cell = sheet.cell(HEADER_ROW, column_index, title)
+        cell.fill = header_fill
+        cell.font = header_font
+        cell.alignment = wrap
+
+    widths = (12, 12, 14, 28, 14, 40)
+    for column_index, width in enumerate(widths, start=1):
+        sheet.column_dimensions[get_column_letter(column_index)].width = width
+
+    data_count = max(len(overlay_rows), BLANK_DATA_ROWS)
+    for offset in range(data_count):
+        excel_row = FIRST_DATA_ROW + offset
+        sheet.row_dimensions[excel_row].height = 64
+        sheet.cell(excel_row, 1).alignment = wrap
+        sheet.cell(excel_row, 2).alignment = wrap
+        if offset < len(overlay_rows):
+            item = overlay_rows[offset]
+            sheet.cell(excel_row, 1, item["desde"])
+            sheet.cell(excel_row, 2, item["hasta"])
+            sheet.cell(excel_row, 4, item["texto"])
+            sheet.cell(excel_row, 5, item["lado"])
+            sheet.cell(excel_row, 6, item["nota"])
+            png_name = item.get("archivo") or ""
+            png_path = (
+                overlay_directory / png_name
+                if overlay_directory and png_name
+                else None
+            )
+            if png_path is not None and png_path.is_file():
+                excel_image = ExcelImage(str(png_path))
+                excel_image.width = 56
+                excel_image.height = 56
+                sheet.add_image(excel_image, f"C{excel_row}")
 
     side_validation = DataValidation(
         type="list",
-        formula1='"derecha,izquierda,gancho"',
+        formula1='"derecha,izquierda,arriba"',
         allow_blank=True,
     )
-    side_validation.error = "Usa derecha, izquierda o gancho"
-    side_validation.prompt = "derecha/izquierda = al lado de la cabeza; gancho = cielo"
-    images_sheet.add_data_validation(side_validation)
-    side_validation.add("G2:G200")
+    side_validation.prompt = "derecha / izquierda de la cabeza, o arriba (título)"
+    sheet.add_data_validation(side_validation)
+    last_row = FIRST_DATA_ROW + data_count - 1
+    side_validation.add(f"E{FIRST_DATA_ROW}:E{last_row}")
+
+    sheet.freeze_panes = "A7"
+    sheet.row_dimensions[1].height = 22
+    sheet.row_dimensions[2].height = 22
+    sheet.row_dimensions[3].height = 22
+    sheet.row_dimensions[HEADER_ROW].height = 22
 
     destination.parent.mkdir(parents=True, exist_ok=True)
     workbook.save(destination)
@@ -114,11 +213,25 @@ def generate_xlsx(destination: Path) -> Path:
 
 
 def main() -> None:
-    """Write ``templates/angelica_brief/plantilla_reel_angelica.xlsx``."""
-    destination = (
-        REPOSITORY_ROOT / "templates" / "angelica_brief" / "plantilla_reel_angelica.xlsx"
+    """Write the blank template, or a filled brief from CSV + PNGs."""
+    parser = argparse.ArgumentParser(description="Build Angélica's one-page Excel brief")
+    parser.add_argument("--csv-dir", help="Folder with 01_proyecto.csv and 02_imagenes_y_tiempos.csv")
+    parser.add_argument("--overlays", help="PNG folder to embed in Foto")
+    parser.add_argument(
+        "--out",
+        help="Destination xlsx (default: templates/angelica_brief/plantilla_reel_angelica.xlsx)",
     )
-    path = generate_xlsx(destination)
+    args = parser.parse_args()
+    destination = (
+        Path(args.out)
+        if args.out
+        else REPOSITORY_ROOT / "templates" / "angelica_brief" / "plantilla_reel_angelica.xlsx"
+    )
+    path = generate_xlsx(
+        destination,
+        csv_directory=Path(args.csv_dir) if args.csv_dir else None,
+        overlay_directory=Path(args.overlays) if args.overlays else None,
+    )
     print("wrote", path)
 
 

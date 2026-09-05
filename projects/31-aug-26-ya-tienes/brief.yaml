@@ -1,0 +1,127 @@
+project:
+  slug: 31-aug-26-ya-tienes
+  title: Ya tienes — medicina familiar
+  brand: dra_angelica
+  language: es
+source:
+  video: source/talking_head.mp4
+  transcript: source/transcript.json
+  overlays: overlays
+  trim_start: 4.0
+  talk_end: 89.5
+output:
+  filename: 31-aug-26-ya-tienes_final.mp4
+  fade_white: 0.7
+  endcard_hold: 2.0
+captions:
+  enabled: true
+  asr_fix:
+    lacena: alacena
+    elevado: elevada
+    revisa: revisé
+overlays:
+- id: name
+  kind: brush_label
+  start: 5.5
+  end: 7.45
+  placement: hook_center
+  text: Dra. Angélica
+  font_size: 72
+  notes: Gancho en el cielo cuando dices tu nombre. No es un lower-third.
+- id: specialty
+  kind: brush_label
+  start: 7.5
+  end: 11.4
+  placement: hook_center
+  text: Medicina Familiar
+  font_size: 66
+  notes: Misma ranura que el nombre.
+- id: pregunta
+  kind: sticker
+  start: 22.8
+  end: 26.2
+  placement: right
+  file: overlays/pregunta.png
+  max_w: 400
+  max_h: 340
+  notes: Cuando dices que concertamos una cita. A la derecha de la cabeza no encima.
+- id: frutero_alto
+  kind: sticker
+  start: 28.0
+  end: 36.0
+  placement: right
+  file: overlays/frutero_alto.png
+  max_w: 480
+  max_h: 340
+  notes: Derecha. El susto se SUMA a la izquierda más tarde; no quitar este.
+- id: susto_frutero
+  kind: sticker
+  start: 32.0
+  end: 36.0
+  placement: left
+  file: overlays/susto.png
+  max_w: 400
+  max_h: 340
+  notes: Entra después del frutero; misma altura; izquierda.
+- id: dulces
+  kind: sticker
+  start: 37.5
+  end: 45.0
+  placement: right
+  file: overlays/dulces.png
+  max_w: 460
+  max_h: 320
+  notes: Derecha cuando hablas de la alacena.
+- id: susto_dulces
+  kind: sticker
+  start: 39.5
+  end: 45.0
+  placement: left
+  file: overlays/susto.png
+  max_w: 400
+  max_h: 340
+  notes: Se suma a los dulces; no reemplaza.
+- id: idea
+  kind: sticker
+  start: 50.8
+  end: 56.8
+  placement: right
+  file: overlays/idea.png
+  max_w: 400
+  max_h: 340
+  notes: El punto de por qué se le subía el azúcar.
+- id: frutero_bajo
+  kind: sticker
+  start: 59.0
+  end: 66.2
+  placement: right
+  file: overlays/frutero_bajo.png
+  max_w: 480
+  max_h: 340
+  notes: Pacto. Derecha.
+- id: sin_azucar
+  kind: sticker
+  start: 63.5
+  end: 66.2
+  placement: left
+  file: overlays/sin_azucar.png
+  max_w: 420
+  max_h: 280
+  notes: Se suma a la izquierda.
+- id: enfoque
+  kind: enfoque_lockup
+  start: 80.0
+  end: 86.2
+  placement: hook_center
+  notes: Generado; no hace falta PNG. Cielo debajo del recorte de IG.
+notes:
+- 'stickers: Nunca poner imágenes encima de la cabeza (parece sombrero). Derecha o
+  izquierda'
+- 'stickers: Si dos imágenes se ven juntas'
+- 'captions: Los subtítulos van en el escote del saco'
+- 'tiempos: Todos los tiempos son de MI video original'
+- 'endcard: La tarjeta de WhatsApp / Medicina Familiar sale sola al final. No hay
+  que programarla aquí.'
+- 'tono: Frutero y dulces "malos" pueden llevar el susto; el pacto (frutas bajas /
+  sin azúcar) no.'
+- 'general: Si una imagen debe entrar DESPUÉS de otra'

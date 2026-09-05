@@ -14,13 +14,13 @@ Times in briefs are **source clock** (the original recording). Final reel time =
 
 ## import_brief
 
-Convert Angélica's spreadsheet (CSV folder or xlsx) into canonical `brief.yaml`.
+Convert Angélica's spreadsheet (Excel `.xlsx` or CSV folder) into canonical `brief.yaml`. Pictures in the `imagen` column are extracted to `overlays/`.
 
-Google Sheets is the human editor; YAML is the machine contract. See [templates/angelica_brief](../templates/angelica_brief/README.md). Spanish headers (`tiempo_inicio`, `lado`, `tipo`) map to `start` / `placement` / `kind`. Unknown `lado` or `tipo` values fail closed.
+Excel is the file she fills (also opens in Google Sheets). YAML is the machine contract. See [templates/angelica_brief](../templates/angelica_brief/README.md). Spanish headers (`tiempo_inicio`, `lado`, `tipo`) map to `start` / `placement` / `kind`. Unknown `lado` or `tipo` values fail closed.
 
 ```bash
+python pipelines/import_brief.py --xlsx projects/<slug>/brief_sheet/<slug>.xlsx --out projects/<slug>/brief.yaml
 python pipelines/import_brief.py --csv-dir examples/ya_tienes/brief_sheet --out examples/ya_tienes/brief.yaml
-python pipelines/import_brief.py --xlsx templates/angelica_brief/plantilla_reel_angelica.xlsx --out /tmp/brief.yaml
 ```
 
 ---

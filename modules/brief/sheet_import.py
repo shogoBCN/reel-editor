@@ -24,6 +24,8 @@ PLACEMENT_BY_ALIAS = {
     "centro": "hook_center",
     "center": "hook_center",
     "gancho": "hook_center",
+    "arriba": "hook_center",
+    "cielo": "hook_center",
     "hook": "hook_center",
     "hook_center": "hook_center",
 }
@@ -134,7 +136,7 @@ def map_placement_name(raw: str) -> str:
     key = normalise_column_header(raw)
     if key not in PLACEMENT_BY_ALIAS:
         raise ValueError(
-            f"Unknown lado/placement {raw!r}. Use derecha, izquierda, or gancho."
+            f"Unknown lado/placement {raw!r}. Use derecha, izquierda, or arriba."
         )
     return PLACEMENT_BY_ALIAS[key]
 
@@ -178,20 +180,29 @@ def overlays_from_rows(rows: list[dict[str, str]]) -> list[dict[str, Any]]:
         end_raw = row.get("tiempo_fin") or row.get("end") or row.get("hasta")
         if not start_raw or not end_raw:
             raise ValueError(f"Row {overlay_id}: missing tiempo_inicio / tiempo_fin")
-        kind = map_overlay_kind(row.get("tipo") or row.get("kind") or "sticker")
+        file_name = row.get("archivo_imagen") or row.get("archivo") or row.get("file")
+        text = row.get("texto") or row.get("text")
+        raw_kind = row.get("tipo") or row.get("kind") or ""
+        if raw_kind:
+            kind = map_overlay_kind(raw_kind)
+        elif text and "enfoque" in text.lower():
+            kind = "enfoque_lockup"
+        elif text and not file_name:
+            kind = "brush_label"
+        else:
+            kind = "sticker"
+        side_raw = row.get("lado") or row.get("placement") or ""
+        if not side_raw:
+            side_raw = "arriba" if kind != "sticker" else "derecha"
         overlay: dict[str, Any] = {
             "id": overlay_id,
             "kind": kind,
             "start": parse_timestamp_to_seconds(start_raw),
             "end": parse_timestamp_to_seconds(end_raw),
-            "placement": map_placement_name(
-                row.get("lado") or row.get("placement") or "derecha"
-            ),
+            "placement": map_placement_name(side_raw),
         }
-        file_name = row.get("archivo_imagen") or row.get("archivo") or row.get("file")
         if file_name:
             overlay["file"] = f"overlays/{Path(file_name).name}"
-        text = row.get("texto") or row.get("text")
         if text:
             overlay["text"] = text
         if row.get("ancho_max"):
@@ -324,14 +335,229 @@ def write_brief_from_csv_dir(csv_dir: Path, destination: Path | None = None) -> 
     return destination
 
 
-def write_brief_from_xlsx(xlsx_path: Path, destination: Path | None = None) -> Path:
-    """Convert a multi-sheet xlsx (same tabs as the CSV template) to brief.yaml.
-
-    Requires openpyxl. Prefer CSV download from Google Sheets when openpyxl
-    is not installed.
+def _anchor_row_index(image) -> int | None:
+    """Return the 1-based worksheet row an openpyxl image is anchored to.
 
     Args:
-        xlsx_path: Workbook matching the Angélica template.
+        image: ``openpyxl.drawing.image.Image``.
+
+    Returns:
+        Row number, or None if the anchor cannot be read.
+    """
+    anchor = getattr(image, "anchor", None)
+    if anchor is None:
+        return None
+    if isinstance(anchor, str):
+        # "F4" → 4
+        digits = "".join(character for character in anchor if character.isdigit())
+        return int(digits) if digits else None
+    from_cell = getattr(anchor, "_from", None)
+    if from_cell is not None and getattr(from_cell, "row", None) is not None:
+        return int(from_cell.row) + 1
+    return None
+
+
+def _overlay_sheet_and_header(workbook) -> tuple[Any, int, list[str]] | None:
+    """Find the overlay table (simple Brief sheet or legacy multi-tab).
+
+    Args:
+        workbook: Open workbook.
+
+    Returns:
+        ``(sheet, header_row_1based, normalised_headers)`` or None.
+    """
+    preferred = []
+    for name in ("Brief", "Reel", "Imagenes_y_tiempos"):
+        if name in workbook.sheetnames:
+            preferred.append(workbook[name])
+    preferred.extend(
+        sheet
+        for sheet in workbook.worksheets
+        if sheet not in preferred
+        and normalise_column_header(sheet.title)
+        not in ("instrucciones", "proyecto", "correcciones", "notas_edicion")
+    )
+    for sheet in preferred:
+        for row_index in range(1, 10):
+            headers = [
+                normalise_column_header(str(cell.value or ""))
+                for cell in sheet[row_index]
+            ]
+            if "desde" in headers or "tiempo_inicio" in headers:
+                return sheet, row_index, headers
+    return None
+
+
+def extract_xlsx_images_to_overlays(
+    workbook,
+    overlays_directory: Path,
+) -> dict[int, str]:
+    """Write pictures from the Foto/imagen column into ``overlays/``.
+
+    Rows that share the same image bytes reuse one PNG. Filename comes from
+    ``archivo_imagen`` when present, else ``foto_<row>.png``.
+
+    Args:
+        workbook: Open workbook (keep ``data_only=False`` so drawings load).
+        overlays_directory: Project ``overlays`` folder.
+
+    Returns:
+        Excel row number → overlay file name.
+    """
+    import hashlib
+
+    located = _overlay_sheet_and_header(workbook)
+    if located is None:
+        return {}
+    sheet, header_row, headers = located
+    images = getattr(sheet, "_images", None) or []
+    if not images:
+        return {}
+
+    file_column = None
+    for key in ("archivo_imagen", "archivo", "file"):
+        if key in headers:
+            file_column = headers.index(key) + 1
+            break
+
+    overlays_directory.mkdir(parents=True, exist_ok=True)
+    digest_to_name: dict[str, str] = {}
+    row_to_name: dict[int, str] = {}
+    for image in images:
+        row_index = _anchor_row_index(image)
+        if row_index is None or row_index <= header_row:
+            continue
+        try:
+            payload = image._data()
+        except Exception:
+            continue
+        if not payload:
+            continue
+        digest = hashlib.sha256(payload).hexdigest()
+        if digest in digest_to_name:
+            row_to_name[row_index] = digest_to_name[digest]
+            continue
+        stated_name = ""
+        if file_column:
+            stated_name = str(sheet.cell(row_index, file_column).value or "").strip()
+        file_name = Path(stated_name).name if stated_name else f"foto_{row_index}.png"
+        if not file_name.lower().endswith((".png", ".jpg", ".jpeg", ".webp")):
+            file_name = f"{file_name}.png"
+        (overlays_directory / file_name).write_bytes(payload)
+        digest_to_name[digest] = file_name
+        row_to_name[row_index] = file_name
+    return row_to_name
+
+
+def _slugify_title(title: str, fallback: str) -> str:
+    """Turn a human title into a folder-safe slug."""
+    raw = normalise_column_header(title).replace("—", " ").replace("-", " ")
+    parts = [part for part in raw.replace("__", "_").split("_") if part]
+    slug = "_".join(parts)[:40]
+    return slug or fallback
+
+
+def brief_dict_from_simple_sheet(
+    sheet,
+    row_to_filename: dict[int, str],
+    project_dir_name: str,
+) -> dict[str, Any]:
+    """Parse the one-tab Brief sheet (título + Desde/Hasta/Foto/Texto/Lado/Nota).
+
+    Args:
+        sheet: Worksheet named Brief.
+        row_to_filename: Pictures extracted from the Foto column.
+        project_dir_name: Fallback slug.
+
+    Returns:
+        Canonical brief dict.
+    """
+    located = _overlay_sheet_and_header(sheet.parent)
+    if located is None:
+        raise ValueError("No Desde/Hasta table on the Brief sheet")
+    table_sheet, header_row, headers = located
+    title = ""
+    trim_raw = "0"
+    talk_end_raw = ""
+    for row_index in range(1, header_row):
+        label = normalise_column_header(str(table_sheet.cell(row_index, 1).value or ""))
+        value = str(table_sheet.cell(row_index, 2).value or "").strip()
+        if "titulo" in label:
+            title = value
+        elif "cortar" in label:
+            trim_raw = value or "0"
+        elif "hablar" in label or "terminas" in label or label.startswith("fin"):
+            talk_end_raw = value
+
+    def cell(row_index: int, key: str) -> str:
+        if key not in headers:
+            return ""
+        value = table_sheet.cell(row_index, headers.index(key) + 1).value
+        return "" if value is None else str(value).strip()
+
+    overlay_rows: list[dict[str, str]] = []
+    for row_index in range(header_row + 1, table_sheet.max_row + 1):
+        start_raw = cell(row_index, "desde") or cell(row_index, "tiempo_inicio")
+        end_raw = cell(row_index, "hasta") or cell(row_index, "tiempo_fin")
+        if not start_raw or not end_raw:
+            continue
+        file_name = (
+            row_to_filename.get(row_index)
+            or cell(row_index, "archivo_imagen")
+            or cell(row_index, "archivo")
+        )
+        text = cell(row_index, "texto")
+        note = cell(row_index, "nota") or cell(row_index, "notas") or cell(row_index, "que_es")
+        overlay_id = cell(row_index, "id") or (
+            Path(file_name).stem if file_name else f"item_{len(overlay_rows) + 1}"
+        )
+        overlay_rows.append(
+            {
+                "id": overlay_id,
+                "tiempo_inicio": start_raw,
+                "tiempo_fin": end_raw,
+                "archivo_imagen": file_name,
+                "texto": text,
+                "lado": cell(row_index, "lado"),
+                "notas_edicion": note,
+            }
+        )
+
+    if not talk_end_raw:
+        raise ValueError("Fill 'Terminas de hablar' at the top of the sheet")
+    slug = _slugify_title(title, project_dir_name)
+    return {
+        "project": {
+            "slug": slug,
+            "title": title or slug,
+            "brand": "dra_angelica",
+            "language": "es",
+        },
+        "source": {
+            "video": "source/talking_head.mp4",
+            "transcript": "source/transcript.json",
+            "overlays": "overlays",
+            "trim_start": parse_timestamp_to_seconds(trim_raw or 0),
+            "talk_end": parse_timestamp_to_seconds(talk_end_raw),
+        },
+        "output": {
+            "filename": f"{slug}.mp4",
+            "fade_white": 0.70,
+            "endcard_hold": 2.00,
+        },
+        "captions": {"enabled": True, "asr_fix": {}},
+        "overlays": overlays_from_rows(overlay_rows),
+        "notes": [],
+    }
+
+
+def write_brief_from_xlsx(xlsx_path: Path, destination: Path | None = None) -> Path:
+    """Convert Angélica's Excel brief (simple one-tab, or legacy multi-tab) to YAML.
+
+    Pictures in the Foto/imagen column are extracted into ``overlays/``.
+
+    Args:
+        xlsx_path: Workbook.
         destination: Optional ``brief.yaml`` path.
 
     Returns:
@@ -344,10 +570,41 @@ def write_brief_from_xlsx(xlsx_path: Path, destination: Path | None = None) -> P
         import openpyxl
     except ImportError as exc:
         raise ImportError(
-            "openpyxl is required to read .xlsx. "
-            "Download each Google Sheet tab as CSV instead, or pip install openpyxl."
+            "openpyxl is required to read .xlsx. pip install openpyxl."
         ) from exc
 
+    if destination is None:
+        parent = xlsx_path.parent
+        destination = (
+            parent.parent / "brief.yaml"
+            if parent.name == "brief_sheet"
+            else parent / "brief.yaml"
+        )
+    overlays_directory = destination.parent / "overlays"
+    drawing_workbook = openpyxl.load_workbook(xlsx_path, data_only=False)
+    row_to_filename = extract_xlsx_images_to_overlays(
+        drawing_workbook, overlays_directory
+    )
+    if row_to_filename:
+        print(
+            f"extracted {len(set(row_to_filename.values()))} overlay image(s) "
+            f"→ {overlays_directory}"
+        )
+
+    located = _overlay_sheet_and_header(drawing_workbook)
+    is_simple = located is not None and "desde" in located[2]
+    if is_simple:
+        sheet = located[0]
+        brief = brief_dict_from_simple_sheet(
+            sheet,
+            row_to_filename,
+            destination.parent.name,
+        )
+        drawing_workbook.close()
+        write_brief_yaml(brief, destination)
+        return destination
+
+    drawing_workbook.close()
     workbook = openpyxl.load_workbook(xlsx_path, data_only=True)
     # Reuse the CSV importer: dump each known tab, then parse as usual.
     export_dir = xlsx_path.parent / ".sheet_csv_export"
@@ -385,7 +642,5 @@ def write_brief_from_xlsx(xlsx_path: Path, destination: Path | None = None) -> P
                 ):
                     continue
                 writer.writerow(["" if cell is None else str(cell) for cell in row])
-    written = write_brief_from_csv_dir(
-        export_dir, destination or xlsx_path.parent / "brief.yaml"
-    )
+    written = write_brief_from_csv_dir(export_dir, destination)
     return written

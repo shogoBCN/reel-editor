@@ -48,6 +48,15 @@ Add an entry for every meaningful change as soon as it lands (or when opening th
 
 ### Logs
 
+#### 2026-09-05 — Change — Brief sheet is Excel; images go in the workbook
+
+- **Author:** Thorsten
+- **Area:** `templates/angelica_brief/`, `scripts/generate_template_xlsx.py`, `modules/brief/sheet_import.py`
+- **Description:** Angélica's brief is `plantilla_reel_angelica.xlsx` (Excel; also opens in Google Sheets). New `imagen` column: paste PNG in-cell. Import extracts those pictures into `overlays/`.
+- **Rationale:** Asking her for a separate Drive folder of named files was the hard part; the sheet already has one row per sticker.
+- **Impact:** `python pipelines/import_brief.py --xlsx path/to/reel.xlsx --out projects/<slug>/brief.yaml` writes YAML and overlay PNGs. CSV tabs remain the git-friendly twin.
+- **Links:** [Angélica brief](documentation/guides/angelica_brief.md) · [plantilla](templates/angelica_brief/README.md)
+
 #### 2026-09-05 — Change — Gemini 3.5 Transcribe replaces Whisper
 
 - **Author:** Thorsten

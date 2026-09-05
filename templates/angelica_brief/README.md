@@ -2,9 +2,11 @@
 
 Esta carpeta es la **plantilla humana**. No tienes que tocar YAML ni código.
 
-**La mejor herramienta:** una **Hoja de Google** (un separador por cada CSV de abajo). Archivo → Descargar → CSV, o descarga el libro completo como `.xlsx`.
+**La mejor herramienta:** el archivo Excel `plantilla_reel_angelica.xlsx`. Ábrelo en Excel, o súbelo a Drive → Abrir con → Hojas de cálculo de Google. (CSV = las mismas pestañas sueltas; el editor puede leer las dos.)
 
-**¿Por qué una hoja y no un Doc?** Los tiempos, archivos y lados son una tabla. Un Doc es más cómodo para pegar capturas, pero el editor no puede leerlo. Las imágenes van en una carpeta de Drive (o por WhatsApp) con el **mismo nombre de archivo** que escribes en la hoja.
+Las **imágenes se pegan en la hoja**, columna `imagen` (Insertar → imagen en la celda). El editor las saca al importar el `.xlsx`. También puedes mandar PNG sueltos con el nombre de `archivo_imagen`.
+
+**¿Por qué una hoja y no un Doc?** Los tiempos y lados son una tabla. Un Doc es cómodo para pegar capturas, pero el editor no puede leerlo. Las fotos van **en la columna imagen** de la misma hoja.
 
 ---
 
@@ -31,10 +33,10 @@ Si dos stickers se superponen (frutero a la **derecha** y susto a la **izquierda
 
 1. El video de cabeza (mejor vertical 9:16).
 2. Esta hoja, llena.
-3. Las imágenes de overlay (PNG; transparente si puedes; fondo negro también sirve — se recorta).
+3. Las imágenes: pégalas en la columna `imagen` de la pestaña Imagenes_y_tiempos, **o** una carpeta de PNG con el mismo nombre que `archivo_imagen`.
 4. Opcional: una nota de voz. Si lo escribes claro en **notas_edicion**, basta.
 
-Nombra los archivos en español, **sin espacios**: `frutero_alto.png`, `pregunta.png`. En `archivo_imagen` escribe **exactamente** ese nombre.
+Nombra los archivos en español, **sin espacios**: `frutero_alto.png`. Si pegas la foto en la celda, `archivo_imagen` puede repetir ese nombre (o dejarse y se usa el `id`).
 
 ---
 
@@ -43,7 +45,7 @@ Nombra los archivos en español, **sin espacios**: `frutero_alto.png`, `pregunta
 | Pestaña | Archivo | Qué llenas |
 |---------|---------|------------|
 | Proyecto | `01_proyecto.csv` | Título, dónde empieza/termina el habla, fundido |
-| Imágenes y tiempos | `02_imagenes_y_tiempos.csv` | Una fila por sticker o título |
+| Imágenes y tiempos | `02_imagenes_y_tiempos.csv` | Una fila por sticker o título; fotos en columna `imagen` |
 | Correcciones | `03_correcciones_transcripcion.csv` | Errores de transcripción (`lacena` → `alacena`) |
 | Notas | `04_notas_edicion.csv` | Libres (sí / no hacer) |
 
@@ -67,7 +69,7 @@ Una quinta pestaña **Instrucciones** puede pegar este texto. El importador la i
 
 | Valor | Qué hace |
 |-------|----------|
-| `sticker` | Usa `archivo_imagen` |
+| `sticker` | Pega la foto en `imagen` (y/o `archivo_imagen`) |
 | `etiqueta` | Pincel teal + texto blanco de la columna `texto` (ej. `Dra. Angélica`) |
 | `enfoque` | Genera ENFOQUE INTEGRAL / Bio – Psico – Social. Sin archivo |
 
@@ -83,7 +85,7 @@ Luego:
 
 1. Fija la fila 1 si no quedó fija.
 2. Duplica la hoja para cada reel nuevo. Renómbrala con fecha + tema.
-3. Comparte la copia + una carpeta de Drive con los PNG (mismos nombres que `archivo_imagen`).
+3. Comparte la copia (con las fotos ya pegadas en la columna imagen) + el video.
 
 Ejemplo lleno: `examples/ya_tienes/brief_sheet/` (el reel “Ya tienes”).
 
@@ -110,7 +112,7 @@ La tarjeta de contacto del final **no** va en esta tabla: se pone sola al termin
 El editor corre:
 
 ```bash
-python pipelines/import_brief.py --csv-dir ruta/a/tus/csv --out projects/<slug>/brief.yaml
+python pipelines/import_brief.py --xlsx projects/<slug>/brief_sheet/<slug>.xlsx --out projects/<slug>/brief.yaml
 python pipelines/reel_compose.py --project projects/<slug> --preview
 ```
 

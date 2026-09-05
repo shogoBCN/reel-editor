@@ -42,5 +42,6 @@ htmlcov/
 *.log
 logs/
 
-# ignore projects folder
-projects/
+# Excel briefs with embedded pictures are generated locally
+*.xlsx
+!templates/angelica_brief/plantilla_reel_angelica.xlsx

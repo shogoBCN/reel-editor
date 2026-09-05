@@ -6,22 +6,23 @@ One project folder per talking-head clip. The engine is brand-agnostic; Dra. Ang
 
 ```text
 projects/<slug>/
-  brief.yaml          # or brief_sheet/*.csv → import_brief
+  brief.yaml          # from import_brief (--xlsx)
+  brief_sheet/*.xlsx  # the Excel she fills (images in-cell)
   source/talking_head.mp4
   source/transcript.json   # from transcribe pipeline
-  overlays/*.png
+  overlays/*.png      # extracted from the sheet, or dropped in
 ```
 
 Copy `examples/ya_tienes/` as a starting point. Source `.mp4` is gitignored — drop it locally.
 
 ## 2. Brief
 
-Prefer Angélica filling the [Google Sheet template](../../templates/angelica_brief/README.md), then:
+Prefer Angélica filling the [Excel / Google Sheets template](../../templates/angelica_brief/README.md) (pictures in the `imagen` column), then:
 
 ```bash
 conda activate angelica-website
 python pipelines/import_brief.py \
-  --csv-dir projects/<slug>/brief_sheet \
+  --xlsx projects/<slug>/brief_sheet/<slug>.xlsx \
   --out projects/<slug>/brief.yaml
 python scripts/check_brief.py --project projects/<slug>
 ```
