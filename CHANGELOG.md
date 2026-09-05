@@ -48,6 +48,15 @@ Add an entry for every meaningful change as soon as it lands (or when opening th
 
 ### Logs
 
+#### 2026-09-05 — Change — Descriptive names, Google-style docstrings, onboarding doc
+
+- **Author:** Thorsten
+- **Area:** `config/`, `modules/`, `pipelines/`, `scripts/`, `documentation/guides/start_here.md`, `README.md`, `requirements.txt`
+- **Description:** Spell out Python identifiers (no `fps` / `asr` / `tw` locals). Every function has an industry-standard Google docstring (Args / Returns / Raises). Why-driven comments sit next to magic numbers and placement rules. Newcomer map: `documentation/guides/start_here.md`. `requirements.txt` now includes Whisper for transcribe.
+- **Rationale:** The first pass was reusable but terse; the next person should understand clocks, safe zones, and call flow without archaeology.
+- **Impact:** On-disk YAML/JSON keys are unchanged (`asr_fix`, transcript `w`/`s`/`e`) so existing briefs still load. Call sites use the new names.
+- **Links:** [Start here](documentation/guides/start_here.md)
+
 #### 2026-09-05 — Add — Initial reusable reel framework
 
 - **Author:** Thorsten

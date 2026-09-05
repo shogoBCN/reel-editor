@@ -1,11 +1,11 @@
-# Video editor – pip dependencies
-# Install inside conda env angelica-website: pip install -r requirements.txt
+# reel-editor – pip dependencies
+# Install inside conda env angelica-website:
+#   conda activate angelica-website
+#   pip install -r requirements.txt
 # ffmpeg must be on PATH (Homebrew: ffmpeg).
 
 Pillow==12.3.0
 numpy==2.5.2
 PyYAML==6.0.3
 openpyxl==3.1.5
-
-# Optional: word-timed captions
-# openai-whisper
+openai-whisper==20250625

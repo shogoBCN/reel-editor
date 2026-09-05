@@ -40,5 +40,5 @@ python pipelines/reel_compose/reel_compose.py --project examples/ya_tienes --ful
 
 - Stickers sit **beside** the head (`derecha` / `izquierda`) at top-safe + brand `sticker.y_from_top_safe`, never on the hat.
 - Hook titles (`gancho`) sit in the sky, below the IG crop.
-- Captions share a baseline (accents must not bounce) and stay inside `caption_inset_px`.
+- Captions share a baseline (accents must not bounce) and stay inside `caption_inset_pixels`.
 - Endcard is the brand PNG letterboxed on white — do not squash into the 15–68% safe band.

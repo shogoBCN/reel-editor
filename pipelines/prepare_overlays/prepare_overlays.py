@@ -13,41 +13,61 @@ from pathlib import Path
 
 from PIL import Image
 
-_script_dir = Path(__file__).resolve().parent
-_repo_root = _script_dir.parent.parent
-sys.path.insert(0, str(_repo_root))
+PIPELINE_DIRECTORY = Path(__file__).resolve().parent
+REPOSITORY_ROOT = PIPELINE_DIRECTORY.parent.parent
+sys.path.insert(0, str(REPOSITORY_ROOT))
 
-from modules.video.image_ops import key_black
+from modules.video.image_ops import cut_black_background
 
 
 def prepare_overlays(
     input_dir: Path,
     output_dir: Path,
-    thresh: int = 28,
+    threshold: int = 28,
     feather: int = 1,
 ) -> list[Path]:
+    """Key every PNG in ``input_dir`` and write cropped RGBA files.
+
+    Args:
+        input_dir: Folder of raw PNGs.
+        output_dir: Destination (created if missing).
+        threshold: Black-cut aggressiveness (see ``cut_black_background``).
+        feather: Soft-edge width.
+
+    Returns:
+        Paths written.
+
+    Raises:
+        FileNotFoundError: No PNGs in the input folder.
+    """
     output_dir.mkdir(parents=True, exist_ok=True)
     written: list[Path] = []
-    for src in sorted(input_dir.glob("*.png")):
-        image = Image.open(src)
-        keyed = key_black(image, thresh=thresh, feather=feather)
-        dest = output_dir / src.name
-        keyed.save(dest, "PNG")
-        written.append(dest)
-        print(f"{src.name}: {image.size} -> {keyed.size}")
+    for source in sorted(input_dir.glob("*.png")):
+        image = Image.open(source)
+        keyed = cut_black_background(image, threshold=threshold, feather=feather)
+        destination = output_dir / source.name
+        keyed.save(destination, "PNG")
+        written.append(destination)
+        print(f"{source.name}: {image.size} -> {keyed.size}")
     if not written:
         raise FileNotFoundError(f"No PNG files in {input_dir}")
     return written
 
 
 def main() -> None:
+    """CLI entry for black-keying a folder of overlay PNGs."""
     parser = argparse.ArgumentParser(description="Key black backgrounds on overlay PNGs")
     parser.add_argument("--input-dir", required=True, help="Folder of raw PNGs")
     parser.add_argument("--output-dir", required=True, help="Folder for keyed PNGs")
     parser.add_argument("--thresh", type=int, default=28)
     parser.add_argument("--feather", type=int, default=1)
     args = parser.parse_args()
-    prepare_overlays(Path(args.input_dir), Path(args.output_dir), args.thresh, args.feather)
+    prepare_overlays(
+        Path(args.input_dir),
+        Path(args.output_dir),
+        args.thresh,
+        args.feather,
+    )
 
 
 if __name__ == "__main__":

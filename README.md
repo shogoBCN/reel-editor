@@ -1,12 +1,14 @@
-# Video editor
+# reel-editor
 
-Reusable **9:16 talking-head reel** toolkit: trim, overlays, karaoke captions, white fade, brand endcard. Briefs are data (YAML or a Google Sheet); the engine does not hardcode a client schedule.
+Reusable **9:16 talking-head reel** toolkit: trim, overlays, karaoke captions, white fade, brand endcard.
 
-Dra. Angélica is the first brand pack (`brands/dra_angelica/`). The locked example is `examples/ya_tienes/`.
+**New here?** Read [Start here](documentation/guides/start_here.md) first (two clocks, where files live, one command to preview).
+
+Briefs are data (YAML or a Google Sheet). The engine does not hardcode a client schedule. Dra. Angélica is `brands/dra_angelica/`. The locked example is `examples/ya_tienes/`.
 
 **Layout** follows Locaria conventions ([`adaptria_pulls`](https://github.com/Locaria/adaptria_pulls): `config/`, `modules/`, `pipelines/<name>/`, `documentation/`, `CHANGELOG.md`).
 
-**Environment:** conda env `angelica-website` (Pillow, numpy, PyYAML, ffmpeg on PATH).
+**Environment:** conda env `angelica-website`. Install: `pip install -r requirements.txt`. ffmpeg must be on `PATH`.
 
 ---
 
@@ -23,6 +25,7 @@ Dra. Angélica is the first brand pack (`brands/dra_angelica/`). The locked exam
 
 ```bash
 conda activate angelica-website
+pip install -r requirements.txt
 python scripts/check_brief.py --project examples/ya_tienes
 python pipelines/reel_compose/reel_compose.py --project examples/ya_tienes --preview
 python pipelines/reel_compose/reel_compose.py --project examples/ya_tienes --full
@@ -32,14 +35,14 @@ Drop `examples/ya_tienes/source/talking_head.mp4` locally if it is missing (mp4 
 
 ## Angélica's brief
 
-She fills a **Google Sheet** (timestamps, image filenames, left/right, notes) — not a Word doc. Template and how-to: [`templates/angelica_brief/`](templates/angelica_brief/README.md). Workbook: [`plantilla_reel_angelica.xlsx`](templates/angelica_brief/plantilla_reel_angelica.xlsx).
+She fills a **Google Sheet** (timestamps, image filenames, left/right, notes) — not a Word doc. Template: [`templates/angelica_brief/`](templates/angelica_brief/README.md). Workbook: [`plantilla_reel_angelica.xlsx`](templates/angelica_brief/plantilla_reel_angelica.xlsx).
 
-Every time is the clock of **her original recording**. Opening silence is `cortar_inicio`. Images live in Drive/WhatsApp with filenames that match the sheet.
+Every time is the clock of **her original recording**. Opening silence is `cortar_inicio`.
 
 ## Repository structure
 
 ```
-video-editor/
+reel-editor/
 ├── config/config_store.py          # canvas, safe zones, paths
 ├── modules/modules_initialiser.py  # get_module("config_store")
 ├── modules/video/                  # timing, ffmpeg, overlays, captions, brand
@@ -62,7 +65,8 @@ video-editor/
 
 | Category | Documentation | Description |
 |----------|---------------|-------------|
-| Getting started | [How to add a reel](documentation/guides/how_to_add_a_reel.md) | New project folder, brief, preview, encode |
+| Getting started | [Start here](documentation/guides/start_here.md) | Two clocks, map of the repo, first commands |
+| | [How to add a reel](documentation/guides/how_to_add_a_reel.md) | New project folder, brief, preview, encode |
 | Brief | [Angélica brief](documentation/guides/angelica_brief.md) | Sheet vs YAML; clock rule |
 | | [Plantilla (ES)](templates/angelica_brief/README.md) | Tabs, `tipo` / `lado`, what to send |
 | Config | [config_store](documentation/config/config_store.md) | Canvas, safe zones, paths |
@@ -74,3 +78,5 @@ video-editor/
 | Example | [ya_tienes](examples/ya_tienes/README.md) | Locked Dra. Angélica reel |
 
 **Change log:** [CHANGELOG.md](CHANGELOG.md)
+
+**Source:** [github.com/shogoBCN/reel-editor](https://github.com/shogoBCN/reel-editor)

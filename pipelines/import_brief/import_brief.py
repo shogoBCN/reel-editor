@@ -11,14 +11,15 @@ import argparse
 import sys
 from pathlib import Path
 
-_script_dir = Path(__file__).resolve().parent
-_repo_root = _script_dir.parent.parent
-sys.path.insert(0, str(_repo_root))
+PIPELINE_DIRECTORY = Path(__file__).resolve().parent
+REPOSITORY_ROOT = PIPELINE_DIRECTORY.parent.parent
+sys.path.insert(0, str(REPOSITORY_ROOT))
 
 from modules.brief.sheet_import import write_brief_from_csv_dir, write_brief_from_xlsx
 
 
 def main() -> None:
+    """CLI entry: ``--csv-dir`` or ``--xlsx`` plus optional ``--out``."""
     parser = argparse.ArgumentParser(
         description="Convert CSV/xlsx brief tabs into brief.yaml"
     )
@@ -32,11 +33,11 @@ def main() -> None:
         help="Destination brief.yaml (default: sibling of the sheet files)",
     )
     args = parser.parse_args()
-    dest = Path(args.out) if args.out else None
+    destination = Path(args.out) if args.out else None
     if args.xlsx:
-        path = write_brief_from_xlsx(Path(args.xlsx), dest)
+        path = write_brief_from_xlsx(Path(args.xlsx), destination)
     elif args.csv_dir:
-        path = write_brief_from_csv_dir(Path(args.csv_dir), dest)
+        path = write_brief_from_csv_dir(Path(args.csv_dir), destination)
     else:
         parser.error("Pass --csv-dir or --xlsx")
         return

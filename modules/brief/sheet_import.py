@@ -11,11 +11,12 @@ import csv
 from pathlib import Path
 from typing import Any
 
-from modules.brief.brief_loader import dump_brief_yaml
-from modules.video.timing import parse_clock
+from modules.brief.brief_loader import write_brief_yaml
+from modules.video.timing import parse_timestamp_to_seconds
 
 
-PLACEMENT_MAP = {
+# Spanish sheet values → engine placement names.
+PLACEMENT_BY_ALIAS = {
     "derecha": "right",
     "right": "right",
     "izquierda": "left",
@@ -27,7 +28,7 @@ PLACEMENT_MAP = {
     "hook_center": "hook_center",
 }
 
-KIND_MAP = {
+KIND_BY_ALIAS = {
     "sticker": "sticker",
     "imagen": "sticker",
     "png": "sticker",
@@ -39,7 +40,15 @@ KIND_MAP = {
 }
 
 
-def _norm_header(name: str) -> str:
+def normalise_column_header(name: str) -> str:
+    """Lowercase, unaccent, and snake_case a spreadsheet header.
+
+    Args:
+        name: Raw CSV/xlsx header (may include ``á`` / spaces).
+
+    Returns:
+        Stable key such as ``tiempo_inicio``.
+    """
     return (
         str(name or "")
         .strip()
@@ -54,30 +63,54 @@ def _norm_header(name: str) -> str:
     )
 
 
-def _read_csv_rows(path: Path) -> list[dict[str, str]]:
+def read_csv_rows(path: Path) -> list[dict[str, str]]:
+    """Read a UTF-8 CSV (BOM-safe) into dicts keyed by normalised headers.
+
+    Args:
+        path: CSV file.
+
+    Returns:
+        Non-empty rows only (blank spreadsheet lines are skipped).
+    """
     with path.open(encoding="utf-8-sig", newline="") as handle:
         reader = csv.DictReader(handle)
         rows = []
         for raw in reader:
-            row = {_norm_header(k): (v or "").strip() for k, v in raw.items() if k}
+            row = {normalise_column_header(key): (value or "").strip() for key, value in raw.items() if key}
             if not any(row.values()):
                 continue
             rows.append(row)
         return rows
 
 
-def _read_kv_csv(path: Path) -> dict[str, str]:
-    """Two-column clave/valor sheet (proyecto tab)."""
+def read_key_value_csv(path: Path) -> dict[str, str]:
+    """Read the Proyecto tab (``clave`` / ``valor`` columns).
+
+    Args:
+        path: ``01_proyecto.csv``.
+
+    Returns:
+        Normalised key → value.
+    """
     mapping: dict[str, str] = {}
-    for row in _read_csv_rows(path):
+    for row in read_csv_rows(path):
         key = row.get("clave") or row.get("key") or row.get("campo")
         value = row.get("valor") or row.get("value") or row.get("dato")
         if key:
-            mapping[_norm_header(key)] = value or ""
+            mapping[normalise_column_header(key)] = value or ""
     return mapping
 
 
-def _first_existing(folder: Path, names: list[str]) -> Path | None:
+def find_first_existing_file(folder: Path, names: list[str]) -> Path | None:
+    """Return the first filename that exists in ``folder``.
+
+    Args:
+        folder: Directory to search.
+        names: Candidate filenames in preference order.
+
+    Returns:
+        Path if found, else None.
+    """
     for name in names:
         path = folder / name
         if path.is_file():
@@ -85,25 +118,59 @@ def _first_existing(folder: Path, names: list[str]) -> Path | None:
     return None
 
 
-def _map_placement(raw: str) -> str:
-    key = _norm_header(raw)
-    if key not in PLACEMENT_MAP:
+def map_placement_name(raw: str) -> str:
+    """Translate Spanish ``lado`` values to engine placement names.
+
+    Args:
+        raw: Cell value (``derecha``, ``izquierda``, ``gancho``, …).
+
+    Returns:
+        ``right``, ``left``, or ``hook_center``.
+
+    Raises:
+        ValueError: Unknown value — fail closed so a typo does not silently
+            default to the right slot.
+    """
+    key = normalise_column_header(raw)
+    if key not in PLACEMENT_BY_ALIAS:
         raise ValueError(
             f"Unknown lado/placement {raw!r}. Use derecha, izquierda, or gancho."
         )
-    return PLACEMENT_MAP[key]
+    return PLACEMENT_BY_ALIAS[key]
 
 
-def _map_kind(raw: str) -> str:
-    key = _norm_header(raw) or "sticker"
-    if key not in KIND_MAP:
+def map_overlay_kind(raw: str) -> str:
+    """Translate Spanish ``tipo`` values to engine kind names.
+
+    Args:
+        raw: Cell value (``sticker``, ``etiqueta``, ``enfoque``, …).
+
+    Returns:
+        ``sticker``, ``brush_label``, or ``enfoque_lockup``.
+
+    Raises:
+        ValueError: Unknown value.
+    """
+    key = normalise_column_header(raw) or "sticker"
+    if key not in KIND_BY_ALIAS:
         raise ValueError(
             f"Unknown tipo {raw!r}. Use sticker, etiqueta, or enfoque."
         )
-    return KIND_MAP[key]
+    return KIND_BY_ALIAS[key]
 
 
 def overlays_from_rows(rows: list[dict[str, str]]) -> list[dict[str, Any]]:
+    """Convert Imágenes_y_tiempos rows into YAML overlay mappings.
+
+    Args:
+        rows: Dicts from ``02_imagenes_y_tiempos.csv``.
+
+    Returns:
+        Overlay list for ``brief.yaml``.
+
+    Raises:
+        ValueError: Missing start/end, or unknown tipo/lado.
+    """
     overlays: list[dict[str, Any]] = []
     for index, row in enumerate(rows, start=1):
         overlay_id = row.get("id") or row.get("nombre") or f"overlay_{index}"
@@ -111,13 +178,15 @@ def overlays_from_rows(rows: list[dict[str, str]]) -> list[dict[str, Any]]:
         end_raw = row.get("tiempo_fin") or row.get("end") or row.get("hasta")
         if not start_raw or not end_raw:
             raise ValueError(f"Row {overlay_id}: missing tiempo_inicio / tiempo_fin")
-        kind = _map_kind(row.get("tipo") or row.get("kind") or "sticker")
+        kind = map_overlay_kind(row.get("tipo") or row.get("kind") or "sticker")
         overlay: dict[str, Any] = {
             "id": overlay_id,
             "kind": kind,
-            "start": parse_clock(start_raw),
-            "end": parse_clock(end_raw),
-            "placement": _map_placement(row.get("lado") or row.get("placement") or "derecha"),
+            "start": parse_timestamp_to_seconds(start_raw),
+            "end": parse_timestamp_to_seconds(end_raw),
+            "placement": map_placement_name(
+                row.get("lado") or row.get("placement") or "derecha"
+            ),
         }
         file_name = row.get("archivo_imagen") or row.get("archivo") or row.get("file")
         if file_name:
@@ -130,7 +199,9 @@ def overlays_from_rows(rows: list[dict[str, str]]) -> list[dict[str, Any]]:
         if row.get("alto_max"):
             overlay["max_h"] = int(float(row["alto_max"]))
         if row.get("tamano_fuente") or row.get("font_size"):
-            overlay["font_size"] = int(float(row.get("tamano_fuente") or row["font_size"]))
+            overlay["font_size"] = int(
+                float(row.get("tamano_fuente") or row["font_size"])
+            )
         notes = row.get("notas_edicion") or row.get("notas") or row.get("que_es")
         if notes:
             overlay["notes"] = notes
@@ -138,94 +209,136 @@ def overlays_from_rows(rows: list[dict[str, str]]) -> list[dict[str, Any]]:
     return overlays
 
 
-def asr_fix_from_rows(rows: list[dict[str, str]]) -> dict[str, str]:
-    fixes: dict[str, str] = {}
+def speech_corrections_from_rows(rows: list[dict[str, str]]) -> dict[str, str]:
+    """Convert the Correcciones tab into the ``asr_fix`` YAML map.
+
+    Args:
+        rows: Dicts from ``03_correcciones_transcripcion.csv``.
+
+    Returns:
+        Wrong word → correct word.
+    """
+    corrections: dict[str, str] = {}
     for row in rows:
         wrong = row.get("palabra_incorrecta") or row.get("whisper") or row.get("from")
         right = row.get("palabra_correcta") or row.get("correcto") or row.get("to")
         if wrong and right:
-            fixes[wrong] = right
-    return fixes
+            corrections[wrong] = right
+    return corrections
 
 
 def brief_dict_from_csv_dir(csv_dir: Path) -> dict[str, Any]:
-    """Build a brief mapping from a folder of Spanish CSV tabs."""
+    """Build a brief mapping from a folder of Spanish CSV tabs.
+
+    Args:
+        csv_dir: Directory with ``01_proyecto.csv`` and ``02_imagenes_y_tiempos.csv``.
+
+    Returns:
+        Canonical brief dict (not yet written to disk).
+
+    Raises:
+        FileNotFoundError: Required tabs are missing.
+    """
     csv_dir = csv_dir.resolve()
-    proyecto_path = _first_existing(
-        csv_dir,
-        ["01_proyecto.csv", "proyecto.csv", "project.csv"],
+    project_path = find_first_existing_file(
+        csv_dir, ["01_proyecto.csv", "proyecto.csv", "project.csv"]
     )
-    imagenes_path = _first_existing(
+    images_path = find_first_existing_file(
         csv_dir,
         ["02_imagenes_y_tiempos.csv", "imagenes_y_tiempos.csv", "overlays.csv"],
     )
-    correcciones_path = _first_existing(
+    corrections_path = find_first_existing_file(
         csv_dir,
         ["03_correcciones_transcripcion.csv", "correcciones.csv", "asr_fix.csv"],
     )
-    notas_path = _first_existing(
-        csv_dir,
-        ["04_notas_edicion.csv", "notas.csv"],
+    notes_path = find_first_existing_file(
+        csv_dir, ["04_notas_edicion.csv", "notas.csv"]
     )
-    if proyecto_path is None or imagenes_path is None:
+    if project_path is None or images_path is None:
         raise FileNotFoundError(
             f"{csv_dir} needs 01_proyecto.csv and 02_imagenes_y_tiempos.csv"
         )
 
-    project_kv = _read_kv_csv(proyecto_path)
-    overlays = overlays_from_rows(_read_csv_rows(imagenes_path))
-    asr_fix = asr_fix_from_rows(_read_csv_rows(correcciones_path)) if correcciones_path else {}
-    notes_rows = _read_csv_rows(notas_path) if notas_path else []
+    project_fields = read_key_value_csv(project_path)
+    overlays = overlays_from_rows(read_csv_rows(images_path))
+    corrections = (
+        speech_corrections_from_rows(read_csv_rows(corrections_path))
+        if corrections_path
+        else {}
+    )
+    notes_rows = read_csv_rows(notes_path) if notes_path else []
     notes = [
         f"{row.get('seccion') or 'general'}: {row.get('nota') or row.get('texto') or ''}".strip()
         for row in notes_rows
         if (row.get("nota") or row.get("texto"))
     ]
 
-    slug = project_kv.get("slug") or csv_dir.parent.name
+    slug = project_fields.get("slug") or csv_dir.parent.name
     return {
         "project": {
             "slug": slug,
-            "title": project_kv.get("titulo") or project_kv.get("title") or slug,
-            "brand": project_kv.get("marca") or project_kv.get("brand") or "dra_angelica",
-            "language": project_kv.get("idioma") or "es",
+            "title": project_fields.get("titulo") or project_fields.get("title") or slug,
+            "brand": project_fields.get("marca") or project_fields.get("brand") or "dra_angelica",
+            "language": project_fields.get("idioma") or "es",
         },
         "source": {
-            "video": project_kv.get("video") or "source/talking_head.mp4",
-            "transcript": project_kv.get("transcripcion") or "source/transcript.json",
+            "video": project_fields.get("video") or "source/talking_head.mp4",
+            "transcript": project_fields.get("transcripcion") or "source/transcript.json",
             "overlays": "overlays",
-            "trim_start": parse_clock(project_kv.get("cortar_inicio") or project_kv.get("trim_start") or 0),
-            "talk_end": parse_clock(project_kv.get("fin_de_habla") or project_kv.get("talk_end")),
+            "trim_start": parse_timestamp_to_seconds(
+                project_fields.get("cortar_inicio") or project_fields.get("trim_start") or 0
+            ),
+            "talk_end": parse_timestamp_to_seconds(
+                project_fields.get("fin_de_habla") or project_fields.get("talk_end")
+            ),
         },
         "output": {
-            "filename": project_kv.get("archivo_salida") or f"{slug}.mp4",
-            "fade_white": float(project_kv.get("fundido_blanco") or 0.70),
-            "endcard_hold": float(project_kv.get("tarjeta_final") or 2.00),
+            "filename": project_fields.get("archivo_salida") or f"{slug}.mp4",
+            "fade_white": float(project_fields.get("fundido_blanco") or 0.70),
+            "endcard_hold": float(project_fields.get("tarjeta_final") or 2.00),
         },
         "captions": {
-            "enabled": (project_kv.get("subtitulos") or "si").lower() not in ("no", "false", "0"),
-            "asr_fix": asr_fix,
+            "enabled": (project_fields.get("subtitulos") or "si").lower()
+            not in ("no", "false", "0"),
+            "asr_fix": corrections,
         },
         "overlays": overlays,
         "notes": notes,
     }
 
 
-def write_brief_from_csv_dir(csv_dir: Path, dest: Path | None = None) -> Path:
-    """Convert a CSV folder to brief.yaml next to it (or at ``dest``)."""
-    brief = brief_dict_from_csv_dir(csv_dir)
-    if dest is None:
-        dest = csv_dir.parent / "brief.yaml"
-    dump_brief_yaml(brief, dest)
-    return dest
+def write_brief_from_csv_dir(csv_dir: Path, destination: Path | None = None) -> Path:
+    """Convert a CSV folder to brief.yaml next to it (or at ``destination``).
 
+    Args:
+        csv_dir: Folder of Spanish CSV tabs.
+        destination: Optional ``brief.yaml`` path.
 
-def write_brief_from_xlsx(xlsx_path: Path, dest: Path | None = None) -> Path:
+    Returns:
+        Path written.
     """
-    Convert a multi-sheet xlsx (same tabs as the CSV template) to brief.yaml.
+    brief = brief_dict_from_csv_dir(csv_dir)
+    if destination is None:
+        destination = csv_dir.parent / "brief.yaml"
+    write_brief_yaml(brief, destination)
+    return destination
+
+
+def write_brief_from_xlsx(xlsx_path: Path, destination: Path | None = None) -> Path:
+    """Convert a multi-sheet xlsx (same tabs as the CSV template) to brief.yaml.
 
     Requires openpyxl. Prefer CSV download from Google Sheets when openpyxl
     is not installed.
+
+    Args:
+        xlsx_path: Workbook matching the Angélica template.
+        destination: Optional ``brief.yaml`` path.
+
+    Returns:
+        Path written.
+
+    Raises:
+        ImportError: openpyxl is missing.
     """
     try:
         import openpyxl
@@ -236,8 +349,9 @@ def write_brief_from_xlsx(xlsx_path: Path, dest: Path | None = None) -> Path:
         ) from exc
 
     workbook = openpyxl.load_workbook(xlsx_path, data_only=True)
-    tmp_dir = xlsx_path.parent / ".sheet_csv_export"
-    tmp_dir.mkdir(parents=True, exist_ok=True)
+    # Reuse the CSV importer: dump each known tab, then parse as usual.
+    export_dir = xlsx_path.parent / ".sheet_csv_export"
+    export_dir.mkdir(parents=True, exist_ok=True)
 
     name_map = {
         "proyecto": "01_proyecto.csv",
@@ -251,7 +365,7 @@ def write_brief_from_xlsx(xlsx_path: Path, dest: Path | None = None) -> Path:
         "notas": "04_notas_edicion.csv",
     }
     for sheet in workbook.worksheets:
-        key = _norm_header(sheet.title)
+        key = normalise_column_header(sheet.title)
         if key in ("instrucciones", "como_usar", "readme"):
             continue
         filename = name_map.get(key)
@@ -260,14 +374,18 @@ def write_brief_from_xlsx(xlsx_path: Path, dest: Path | None = None) -> Path:
         rows = list(sheet.iter_rows(values_only=True))
         if not rows:
             continue
-        headers = [_norm_header(str(h or "")) for h in rows[0]]
-        out_path = tmp_dir / filename
+        headers = [normalise_column_header(str(header or "")) for header in rows[0]]
+        out_path = export_dir / filename
         with out_path.open("w", encoding="utf-8", newline="") as handle:
             writer = csv.writer(handle)
             writer.writerow(headers)
             for row in rows[1:]:
-                if row is None or all(cell is None or str(cell).strip() == "" for cell in row):
+                if row is None or all(
+                    cell is None or str(cell).strip() == "" for cell in row
+                ):
                     continue
                 writer.writerow(["" if cell is None else str(cell) for cell in row])
-    dest = write_brief_from_csv_dir(tmp_dir, dest or xlsx_path.parent / "brief.yaml")
-    return dest
+    written = write_brief_from_csv_dir(
+        export_dir, destination or xlsx_path.parent / "brief.yaml"
+    )
+    return written
