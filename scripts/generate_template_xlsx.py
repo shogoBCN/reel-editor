@@ -219,7 +219,7 @@ def generate_xlsx(
     sheet["A4"] = HINT
     sheet["A4"].font = hint_font
     sheet["A4"].alignment = Alignment(wrap_text=True, vertical="center")
-    sheet.row_dimensions[4].height = 72
+    sheet.row_dimensions[4].height = 84
 
     headers = ["Desde", "Hasta", "Foto", "Qué quieres"]
     for column_index, title in enumerate(headers, start=1):
@@ -261,7 +261,7 @@ def generate_xlsx(
 
     sheet.freeze_panes = "A7"
     sheet.row_dimensions[1].height = 22
-    sheet.row_dimensions[2].height = 22
+    sheet.row_dimensions[2].height = 28
     sheet.row_dimensions[3].height = 22
     sheet.row_dimensions[HEADER_ROW].height = 22
 

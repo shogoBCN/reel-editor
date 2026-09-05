@@ -19,7 +19,7 @@ Phone recording  +  Excel brief (or YAML)  +  PNG stickers
 | **Source** | Angélica’s original file, including opening silence | fruit bowl at `0:28` |
 | **Final** | Published reel after `trim_start` | same bowl at `0:24` if trim is `4.0s` |
 
-The brief always uses **source** time. `scripts/check_brief.py` prints both.
+The brief always uses **source** time. Do not cut the recording; «El reel empieza en» is `trim_start`. `scripts/check_brief.py` prints both clocks.
 
 ## Where to look
 

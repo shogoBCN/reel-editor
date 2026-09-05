@@ -48,6 +48,15 @@ Add an entry for every meaningful change as soon as it lands (or when opening th
 
 ### Logs
 
+#### 2026-09-05 — Change — Brief marks where the reel starts; do not cut her file
+
+- **Author:** Thorsten
+- **Area:** `scripts/generate_template_xlsx.py`, `modules/brief/sheet_import.py`, `templates/angelica_brief/`, `.cursor/skills/angelica-reel-brief/`
+- **Description:** Top cell is **El reel empieza en** (source-clock time, e.g. `0:04`), not “cut N seconds”. **Terminas de hablar** is when she stops talking. Source `mp4` stays uncut (she usually records 1–5s of pre-roll and tail). Compose still uses `trim_start` / `talk_end`.
+- **Rationale:** Cutting the file first would invalidate every Desde/Hasta she wrote.
+- **Impact:** Import accepts the new label and the old “Cortar al inicio”. Skill forbids trimming `talking_head.mp4`.
+- **Links:** [Angélica brief](documentation/guides/angelica_brief.md) · [skill](.cursor/skills/angelica-reel-brief/SKILL.md)
+
 #### 2026-09-05 — Change — Sheet times are ``1:29,5``; Instrucciones tab
 
 - **Author:** Thorsten
