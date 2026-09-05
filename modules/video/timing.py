@@ -108,6 +108,19 @@ def format_seconds_as_sheet_timestamp(total_seconds: float) -> str:
     return f"{minutes}:{seconds:02d}"
 
 
+def smoothstep(amount: float) -> float:
+    """Cubic Hermite smoothstep so fades and wipes ease instead of linear cuts.
+
+    Args:
+        amount: Unclamped 0–1 (values outside are clipped).
+
+    Returns:
+        Smoothed 0–1.
+    """
+    amount = max(0.0, min(1.0, amount))
+    return amount * amount * (3.0 - 2.0 * amount)
+
+
 def convert_source_time_to_final_time(
     source_time_seconds: float, trim_start_seconds: float
 ) -> float:

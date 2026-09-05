@@ -68,6 +68,14 @@ def check_brief(project_dir: Path) -> None:
             f"{format_seconds_as_timestamp(final_end)}"
             f"  {layer.image.size[0]}x{layer.image.size[1]}"
         )
+    print(f"transitions   {len(brief.transitions)}")
+    for transition in brief.transitions:
+        print(
+            f"  {transition.transition_id:16} {transition.style:12} "
+            f"{format_seconds_as_timestamp(transition.start_seconds)}–"
+            f"{format_seconds_as_timestamp(transition.end_seconds)} "
+            f"cut {format_seconds_as_timestamp(transition.cut_seconds)}"
+        )
     print(f"speech_fixes  {brief.speech_recognition_corrections}")
     print("ok")
 

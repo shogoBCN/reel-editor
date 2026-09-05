@@ -143,11 +143,13 @@ def load_caption_groups(
                 "words": group,
             }
         )
-    # Hold each line until the next one starts so we never flash empty frames.
+    # Bridge tiny gaps so karaoke does not blink between consecutive lines.
+    # Do not stretch a line across a pause / jump cut (those windows are 0.5s+).
+    max_line_hold_seconds = 0.28
     for index, group in enumerate(timed_groups[:-1]):
-        group["end_seconds"] = max(
-            group["end_seconds"], timed_groups[index + 1]["start_seconds"] - 0.04
-        )
+        bridged_end = timed_groups[index + 1]["start_seconds"] - 0.04
+        if bridged_end <= group["end_seconds"] + max_line_hold_seconds:
+            group["end_seconds"] = max(group["end_seconds"], bridged_end)
     return timed_groups
 
 

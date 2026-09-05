@@ -18,17 +18,20 @@ def grab_source_frame(
     source_path: Path,
     source_time_seconds: float,
     config_store: ConfigStore,
+    accurate_seek: bool = False,
 ) -> bytes:
     """Seek-and-grab one RGB24 frame at the source clock.
 
     Used by ``--preview`` so we do not decode the whole clip for a dozen
     stills. ``-ss`` before ``-i`` is a fast (keyframe) seek — good enough
-    for review JPEGs.
+    for review JPEGs. Pass ``accurate_seek=True`` for transition hold
+    frames so we land on the correct side of a cut.
 
     Args:
         source_path: Talking-head file.
         source_time_seconds: Timestamp on that file.
         config_store: Target canvas size.
+        accurate_seek: Decode-then-seek (slower, frame-accurate).
 
     Returns:
         Raw ``width * height * 3`` RGB bytes.
@@ -36,16 +39,29 @@ def grab_source_frame(
     Raises:
         subprocess.CalledProcessError: ffmpeg failed (missing file, no decoder).
     """
-    command = [
-        "ffmpeg",
-        "-y",
-        "-hide_banner",
-        "-loglevel",
-        "error",
-        "-ss",
-        f"{source_time_seconds:.3f}",
-        "-i",
-        str(source_path),
+    seek_args = ["-ss", f"{source_time_seconds:.3f}"]
+    input_args = ["-i", str(source_path)]
+    if accurate_seek:
+        command_prefix = [
+            "ffmpeg",
+            "-y",
+            "-hide_banner",
+            "-loglevel",
+            "error",
+            *input_args,
+            *seek_args,
+        ]
+    else:
+        command_prefix = [
+            "ffmpeg",
+            "-y",
+            "-hide_banner",
+            "-loglevel",
+            "error",
+            *seek_args,
+            *input_args,
+        ]
+    command = command_prefix + [
         "-frames:v",
         "1",
         "-vf",

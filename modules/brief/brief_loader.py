@@ -15,6 +15,7 @@ from typing import Any
 import yaml
 
 from modules.video.timing import parse_timestamp_to_seconds
+from modules.video.transitions import SceneTransition, parse_scene_transition
 
 
 @dataclass
@@ -37,6 +38,7 @@ class ProjectBrief:
     captions_enabled: bool
     speech_recognition_corrections: dict[str, str]
     overlays: list[dict[str, Any]]
+    transitions: list[SceneTransition]
     preview_shots: dict[str, float]
     notes: list[str] = field(default_factory=list)
 
@@ -147,13 +149,16 @@ def normalise_overlay_row(row: dict[str, Any]) -> dict[str, Any]:
 
 
 def default_preview_shots(
-    overlays: list[dict[str, Any]], talk_end_seconds: float
+    overlays: list[dict[str, Any]],
+    talk_end_seconds: float,
+    transitions: list[SceneTransition] | None = None,
 ) -> dict[str, float]:
     """Build preview seek points from overlay midpoints plus the fade.
 
     Args:
         overlays: Normalised overlay rows.
         talk_end_seconds: Source-clock end of speech (for the fade still).
+        transitions: Optional jump-cut windows (seeked at ``cut``).
 
     Returns:
         Label → source-clock seconds.
@@ -162,6 +167,8 @@ def default_preview_shots(
     for row in overlays:
         midpoint = (float(row["start"]) + float(row["end"])) / 2.0
         shots[str(row["id"])] = midpoint
+    for transition in transitions or []:
+        shots[transition.transition_id] = transition.cut_seconds
     shots["fade"] = max(0.0, talk_end_seconds - 0.3)
     return shots
 
@@ -223,6 +230,11 @@ def load_brief(project_dir: Path) -> ProjectBrief:
         raise ValueError("overlays must be a list")
     overlays = [normalise_overlay_row(row) for row in overlays_raw]
 
+    transitions_raw = parsed.get("transitions") or []
+    if not isinstance(transitions_raw, list):
+        raise ValueError("transitions must be a list")
+    transitions = [parse_scene_transition(row) for row in transitions_raw]
+
     preview_raw = parsed.get("preview") or {}
     if preview_raw:
         preview_shots = {
@@ -230,7 +242,9 @@ def load_brief(project_dir: Path) -> ProjectBrief:
             for label, timestamp in preview_raw.items()
         }
     else:
-        preview_shots = default_preview_shots(overlays, talk_end_seconds)
+        preview_shots = default_preview_shots(
+            overlays, talk_end_seconds, transitions
+        )
 
     # On-disk key stays ``asr_fix`` so existing briefs/sheets keep working.
     corrections = captions.get("asr_fix") or {}
@@ -259,6 +273,7 @@ def load_brief(project_dir: Path) -> ProjectBrief:
         captions_enabled=bool(captions.get("enabled", True)),
         speech_recognition_corrections=corrections,
         overlays=overlays,
+        transitions=transitions,
         preview_shots=preview_shots,
         notes=notes,
     )

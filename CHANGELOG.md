@@ -48,6 +48,15 @@ Add an entry for every meaningful change as soon as it lands (or when opening th
 
 ### Logs
 
+#### 2026-09-05 — Add — Jump-cut scene transitions (four styles)
+
+- **Author:** Thorsten
+- **Area:** `modules/video/transitions.py`, `pipelines/reel_compose.py`, `modules/brief/brief_loader.py`, `modules/video/ffmpeg_io.py`
+- **Description:** Briefs can list `transitions:` windows (`start` / `cut` / `end` on the source clock). Compose mixes take A into take B with `fade_white`, `crossfade`, `slide_left`, or `roll_up`. `--transition-variants` encodes several styles in one decode pass. Accurate ffmpeg seek for hold frames. `scripts/test_transitions.py` covers mixers.
+- **Rationale:** Talking-head jump cuts (pauses between takes) read as abrupt; the first cut on *A partir de los 40* needed a 0.6s mix, and we wanted a few looks without re-decoding.
+- **Impact:** Existing briefs without `transitions:` are unchanged. Karaoke lines no longer stretch across a pause (max 0.28s hold), so jump-cut mixes do not split the previous sentence. New flag: `python pipelines/reel_compose.py --project … --full --transition-variants fade_white,crossfade,slide_left,roll_up`.
+- **Links:** [pipelines](pipelines/README.md)
+
 #### 2026-09-05 — Fix — Hint row no longer wipes «El reel empieza en»
 
 - **Author:** Thorsten
