@@ -31,7 +31,8 @@ BLANK_DATA_ROWS = 12
 HINT = (
     "Escribe con tus palabras. Reloj = TU video, no Instagram. "
     "Pega la foto en Foto. En «Qué quieres» di qué se ve y dónde "
-    "(derecha / izquierda / arriba). Cursor arma el reel."
+    "(derecha / izquierda / arriba). Si dos fotos se ven juntas, son dos filas. "
+    "Cursor arma el reel."
 )
 
 
@@ -85,19 +86,19 @@ def _overlay_rows_from_csv(csv_directory: Path) -> list[dict[str, str]]:
         nota = (row.get("que_es") or "").strip()
         extra = (row.get("notas_edicion") or "").strip()
         lado = side
-        bits = [part for part in (nota, extra) if part]
-        if kind == "etiqueta" and text:
+        # Filled examples store the human «Qué quieres» sentence in notas_edicion.
+        if extra:
+            want = extra
+        elif kind == "etiqueta" and text:
             want = f"{text} arriba en el cielo"
         elif kind == "enfoque":
             want = text or "ENFOQUE INTEGRAL arriba en el cielo (sin foto, se genera)"
         elif lado:
-            want = ". ".join(bits) if bits else ""
+            want = nota if nota else f"{lado} de la cabeza"
             if lado and want and lado not in want.lower():
                 want = f"{want}. {lado} de la cabeza."
-            elif lado and not want:
-                want = f"{lado} de la cabeza"
         else:
-            want = ". ".join(bits)
+            want = nota
         simple.append(
             {
                 "desde": (row.get("tiempo_inicio") or "").strip(),
@@ -168,7 +169,7 @@ def generate_xlsx(
     sheet["A4"] = HINT
     sheet["A4"].font = hint_font
     sheet["A4"].alignment = Alignment(wrap_text=True, vertical="center")
-    sheet.row_dimensions[4].height = 36
+    sheet.row_dimensions[4].height = 48
 
     headers = ["Desde", "Hasta", "Foto", "Qué quieres"]
     for column_index, title in enumerate(headers, start=1):
@@ -184,9 +185,9 @@ def generate_xlsx(
     data_count = max(len(overlay_rows), BLANK_DATA_ROWS)
     for offset in range(data_count):
         excel_row = FIRST_DATA_ROW + offset
-        sheet.row_dimensions[excel_row].height = 64
-        sheet.cell(excel_row, 1).alignment = wrap
-        sheet.cell(excel_row, 2).alignment = wrap
+        sheet.row_dimensions[excel_row].height = 88
+        for column_index in (1, 2, 4):
+            sheet.cell(excel_row, column_index).alignment = wrap
         if offset < len(overlay_rows):
             item = overlay_rows[offset]
             sheet.cell(excel_row, 1, item["desde"])
@@ -200,8 +201,8 @@ def generate_xlsx(
             )
             if png_path is not None and png_path.is_file():
                 excel_image = ExcelImage(str(png_path))
-                excel_image.width = 56
-                excel_image.height = 56
+                excel_image.width = 72
+                excel_image.height = 72
                 sheet.add_image(excel_image, f"C{excel_row}")
 
     sheet.freeze_panes = "A7"

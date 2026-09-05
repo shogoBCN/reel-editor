@@ -44,4 +44,5 @@ logs/
 
 # Excel briefs with embedded pictures are generated locally
 *.xlsx
+*.csv
 !templates/angelica_brief/plantilla_reel_angelica.xlsx

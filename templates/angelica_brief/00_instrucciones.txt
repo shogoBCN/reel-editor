@@ -3,6 +3,7 @@
 1. Título, segundos a cortar al inicio, cuándo terminas de hablar (reloj de TU video).
 2. Una fila por cosa que se ve: desde / hasta / pega la foto / qué quieres.
 3. Escribe como hables (derecha, izquierda, arriba, el susto se suma…).
+   Si dos fotos se ven juntas, son dos filas.
 4. Sin foto = títulos (tu nombre, Medicina Familiar, ENFOQUE INTEGRAL).
 5. La tarjeta de WhatsApp del final no va aquí: sale sola.
 6. No uses el reloj del Instagram ya publicado. No pongas fotos encima de la cabeza.

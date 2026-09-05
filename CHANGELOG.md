@@ -48,56 +48,28 @@ Add an entry for every meaningful change as soon as it lands (or when opening th
 
 ### Logs
 
-#### 2026-09-05 — Change — Her brief is natural language; Cursor makes YAML
+#### 2026-09-05 — Change — Example «Ya tienes» Excel now reads as Angélica would fill it
+
+- **Author:** Thorsten
+- **Area:** `projects/31-aug-26-ya-tienes/brief_sheet/`, `examples/ya_tienes/brief_sheet/`, `scripts/generate_template_xlsx.py`
+- **Description:** The sample workbook is the four-column plantilla (`Desde` / `Hasta` / `Foto` / `Qué quieres`). Each row describes the graphic in her words: what it is, which side of the head, when it appears in the story, and when a second photo is added on another overlapping row. Titles without photos (nombre, especialidad, ENFOQUE INTEGRAL) are spelled out. `notas_edicion` in the CSV twin is that same sentence so rebuilds stay in sync.
+- **Rationale:** The previous file still had `Texto` / `Lado` / `Nota`, and photo rows were empty — a poor model for the sheet she actually fills.
+- **Impact:** Import still infers placement from derecha / izquierda / arriba in «Qué quieres». Blank plantilla hint now mentions the two-row overlap rule.
+
+#### 2026-09-05 — Change — Angélica's brief is a one-tab Excel; Cursor makes YAML
 
 - **Author:** Thorsten
 - **Area:** `templates/angelica_brief/`, `scripts/generate_template_xlsx.py`, `modules/brief/sheet_import.py`, `.cursor/skills/angelica-reel-brief/`
-- **Description:** Angélica's workbook is four columns (`Desde`, `Hasta`, `Foto`, `Qué quieres`) plus three cells at the top. Import sketches YAML from times, pasted photos, and free Spanish. Cursor amends it to engine-ready `brief.yaml` (skill `angelica-reel-brief`).
-- **Rationale:** The agent runs the pipelines; she should not fill `tipo`, `lado`, or pixel sizes.
-- **Impact:** `import_brief.py --xlsx` still works as a first pass. Do not compose from that YAML until overlays match `examples/ya_tienes/brief.yaml`.
-- **Links:** [Angélica brief](documentation/guides/angelica_brief.md) · [skill](.cursor/skills/angelica-reel-brief/SKILL.md)
+- **Description:** She fills `plantilla_reel_angelica.xlsx`: three cells at the top, then `Desde` / `Hasta` / `Foto` / `Qué quieres`. Photos paste in-cell; notes stay free Spanish. `import_brief.py --xlsx` extracts PNGs into `overlays/` and sketches YAML. Cursor amends that sketch to engine-ready `brief.yaml` (skill `angelica-reel-brief`). She does not fill `tipo`, `lado`, or pixel sizes.
+- **Rationale:** A Drive folder of named files, plus engine vocabulary, was the hard part. The agent runs the pipelines.
+- **Impact:** Import is a first pass only — do not compose until overlays match `examples/ya_tienes/brief.yaml`. Legacy CSV tabs remain the git-friendly twin.
+- **Links:** [Angélica brief](documentation/guides/angelica_brief.md) · [plantilla](templates/angelica_brief/README.md) · [skill](.cursor/skills/angelica-reel-brief/SKILL.md)
 
-#### 2026-09-05 — Change — Brief sheet is Excel; images go in the workbook
-
-- **Author:** Thorsten
-- **Area:** `templates/angelica_brief/`, `scripts/generate_template_xlsx.py`, `modules/brief/sheet_import.py`
-- **Description:** Angélica's brief is `plantilla_reel_angelica.xlsx` (Excel; also opens in Google Sheets). New `imagen` column: paste PNG in-cell. Import extracts those pictures into `overlays/`.
-- **Rationale:** Asking her for a separate Drive folder of named files was the hard part; the sheet already has one row per sticker.
-- **Impact:** `python pipelines/import_brief.py --xlsx path/to/reel.xlsx --out projects/<slug>/brief.yaml` writes YAML and overlay PNGs. CSV tabs remain the git-friendly twin.
-- **Links:** [Angélica brief](documentation/guides/angelica_brief.md) · [plantilla](templates/angelica_brief/README.md)
-
-#### 2026-09-05 — Change — Gemini 3.5 Transcribe replaces Whisper
+#### 2026-09-05 — Add — Reusable reel-editor
 
 - **Author:** Thorsten
-- **Area:** `pipelines/transcribe.py`, `modules/gemini/`, `config/config_store.py`, `auth/`, `requirements.txt`
-- **Description:** Karaoke transcripts come from `gemini-3.5-transcribe` (word timestamps). API key lives in gitignored `auth/auth-config.json`; model IDs, AI Studio endpoint, and language map (`es` → `es-419`) live on `config_store`. `get_module("gemini_client")` is the shared SDK handle for later image/music work. Removed `auth/.gitkeep` and `projects/.gitkeep`.
-- **Rationale:** Side-by-side on *Ya tienes* showed Gemini fixing the Whisper misses (`alacena`, `elevada`, `revisé`, `WhatsApp`) without a custom vocabulary.
-- **Impact:** `pip install -r requirements.txt` pulls `google-genai` instead of `openai-whisper`. Copy the auth example before running `pipelines/transcribe.py`.
-- **Links:** [config_store](documentation/config/config_store.md) · [pipelines](pipelines/README.md) · [Gemini 3.5 Transcribe](https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-3-5-transcribe/)
-
-#### 2026-09-05 — Change — Flatten pipeline scripts into `pipelines/`
-
-- **Author:** Thorsten
-- **Area:** `pipelines/`, `README.md`, `documentation/`
-- **Description:** Entry scripts sit directly in `pipelines/` (`reel_compose.py`, `import_brief.py`, `transcribe.py`, `prepare_overlays.py`). Per-pipeline `pipeline_docu/` folders are gone; one [pipelines/README.md](pipelines/README.md) covers all four.
-- **Rationale:** Nested `pipelines/<name>/<name>.py` plus a doc folder each was heavier than this repo needs.
-- **Impact:** Run `python pipelines/reel_compose.py …` (no extra path segment). Call sites and onboarding docs updated.
-- **Links:** [pipelines/README.md](pipelines/README.md)
-
-#### 2026-09-05 — Change — Descriptive names, Google-style docstrings, onboarding doc
-
-- **Author:** Thorsten
-- **Area:** `config/`, `modules/`, `pipelines/`, `scripts/`, `documentation/guides/start_here.md`, `README.md`, `requirements.txt`
-- **Description:** Spell out Python identifiers (no `fps` / `asr` / `tw` locals). Every function has an industry-standard Google docstring (Args / Returns / Raises). Why-driven comments sit next to magic numbers and placement rules. Newcomer map: `documentation/guides/start_here.md`. `requirements.txt` now includes Whisper for transcribe.
-- **Rationale:** The first pass was reusable but terse; the next person should understand clocks, safe zones, and call flow without archaeology.
-- **Impact:** On-disk YAML/JSON keys are unchanged (`asr_fix`, transcript `w`/`s`/`e`) so existing briefs still load. Call sites use the new names.
-- **Links:** [Start here](documentation/guides/start_here.md)
-
-#### 2026-09-05 — Add — Initial reusable reel framework
-
-- **Author:** Thorsten
-- **Area:** `config/`, `modules/`, `pipelines/`, `brands/dra_angelica/`, `templates/angelica_brief/`, `examples/ya_tienes/`
-- **Description:** Port the Dra. Angélica “Ya tienes” compose pipeline out of `dra-angelica-website` into a Locaria-shaped repo. Briefs drive timestamps and overlays; brand look lives in `brands/<id>/`. Spanish Google-Sheet template (CSV + xlsx) converts to `brief.yaml`.
-- **Rationale:** The locked reel was a one-off script. Next clips need the same engine without copying `compose.py`.
-- **Impact:** New reels are a project folder + sheet/YAML. Example `examples/ya_tienes` reproduces the locked overlay schedule (source clock, stickers beside the head, karaoke captions, full-frame endcard).
-- **Links:** [README](README.md) · [Angélica brief](documentation/guides/angelica_brief.md) · [pipelines](pipelines/README.md)
+- **Area:** `config/`, `modules/`, `pipelines/`, `brands/dra_angelica/`, `examples/ya_tienes/`, `auth/`, `documentation/`
+- **Description:** Port the Dra. Angélica “Ya tienes” compose pipeline out of `dra-angelica-website` into a Locaria-shaped repo. Briefs drive timestamps and overlays; brand look lives in `brands/<id>/`. Entry scripts sit flat in `pipelines/` (`reel_compose.py`, `import_brief.py`, `transcribe.py`, `prepare_overlays.py`). Karaoke uses `gemini-3.5-transcribe` (word timestamps; `google-genai` instead of Whisper). API key in gitignored `auth/auth-config.json`; model IDs and AI Studio endpoint on `config_store`. Python names are spelled out; Google-style docstrings; onboarding in `documentation/guides/start_here.md`.
+- **Rationale:** The locked reel was a one-off script. Next clips need the same engine. Gemini beat Whisper on *Ya tienes* (`alacena`, `elevada`, `revisé`, `WhatsApp`). Nested `pipelines/<name>/<name>.py` was heavier than this repo needs.
+- **Impact:** New reels are a project folder + brief. `examples/ya_tienes` reproduces the locked overlay schedule (source clock, stickers beside the head, karaoke captions, full-frame endcard). Run `python pipelines/reel_compose.py …`. Copy the auth example before transcribe. On-disk YAML/JSON keys are unchanged (`asr_fix`, transcript `w`/`s`/`e`).
+- **Links:** [README](README.md) · [Start here](documentation/guides/start_here.md) · [pipelines](pipelines/README.md) · [config_store](documentation/config/config_store.md) · [Gemini 3.5 Transcribe](https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-3-5-transcribe/)
