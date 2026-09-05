@@ -37,7 +37,7 @@ Drop `examples/ya_tienes/source/talking_head.mp4` locally if it is missing (mp4 
 
 She fills a **one-tab Excel** (`Desde` / `Hasta` / `Foto` / `Qué quieres`) — photos pasted in cells at any pixel size, notes in Spanish including **grande / mediano / chico**. Template: [`templates/angelica_brief/`](templates/angelica_brief/README.md). Workbook: [`plantilla_reel_angelica.xlsx`](templates/angelica_brief/plantilla_reel_angelica.xlsx). Cursor maps that onto `brief.yaml` (skill: `.cursor/skills/angelica-reel-brief`).
 
-Every time is the clock of **her original recording**. Opening silence is `cortar_inicio`.
+Every time is the clock of **her original recording**. «El reel empieza en» is that start mark (`trim_start`); do not cut the source file.
 
 ## Repository structure
 

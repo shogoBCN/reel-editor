@@ -20,9 +20,9 @@ Sin foto = títulos (tu nombre, Medicina Familiar, ENFOQUE INTEGRAL). La tarjeta
 
 ## La regla del reloj
 
-Todos los tiempos son el reloj de **tu grabación original**, incluyendo silencio o toma fallida al inicio. El recorte (`Cortar al inicio`) se aplica después.
+Todos los tiempos son el reloj de **tu grabación original**, incluyendo los 1–5 segundos de silencio al inicio. **No recortes el video** antes de mandarlo: marca «El reel empieza en». Si lo cortas, Desde/Hasta quedan mal.
 
-Ejemplos: `0:28` = segundo 28 de *tu* video. `1:29,5` = 1 minuto 29 segundos y medio. `10:25,5` = 10 minutos 25,5 segundos. **Coma** para los décimos. No hace falta al frame (los subtítulos salen solos). `4` en cortar = quitar los primeros 4 segundos.
+Ejemplos: `0:04` = el reel publicado empieza en el segundo 4 de *tu* archivo. `0:28` = segundo 28. `1:29,5` = 1 minuto 29 segundos y medio. **Coma** para los décimos. No hace falta al frame (los subtítulos salen solos).
 
 Si dos cosas se ven a la vez (frutero a la derecha y el susto a la izquierda), son **dos filas**.
 
