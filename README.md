@@ -8,7 +8,7 @@ Briefs are data (YAML or a Google Sheet). The engine does not hardcode a client 
 
 **Layout** follows Locaria conventions ([`adaptria_pulls`](https://github.com/Locaria/adaptria_pulls): `config/`, `modules/`, `pipelines/`, `documentation/`, `CHANGELOG.md`). Pipeline scripts sit flat in `pipelines/` with one combined [README](pipelines/README.md).
 
-**Environment:** conda env `angelica-website`. Install: `pip install -r requirements.txt`. ffmpeg must be on `PATH`.
+**Environment:** conda env `angelica-website`. Install: `pip install -r requirements.txt`. ffmpeg must be on `PATH`. Copy `auth/auth-config.example.json` to `auth/auth-config.json` and set `gemini.api_key` (needed for transcribe).
 
 ---
 
@@ -18,7 +18,7 @@ Briefs are data (YAML or a Google Sheet). The engine does not hardcode a client 
 |------|-------|------|
 | Compose | [`reel_compose.py`](pipelines/reel_compose.py) | Brief → preview JPEGs or H.264 reel |
 | Brief | [`import_brief.py`](pipelines/import_brief.py) | Google Sheet CSV/xlsx → `brief.yaml` |
-| Speech | [`transcribe.py`](pipelines/transcribe.py) | Whisper word timestamps → `transcript.json` |
+| Speech | [`transcribe.py`](pipelines/transcribe.py) | Gemini 3.5 Transcribe → `transcript.json` |
 | Assets | [`prepare_overlays.py`](pipelines/prepare_overlays.py) | Key black backgrounds on PNG stickers |
 
 ## Quick start
@@ -43,8 +43,10 @@ Every time is the clock of **her original recording**. Opening silence is `corta
 
 ```
 reel-editor/
-├── config/config_store.py          # canvas, safe zones, paths
+├── config/config_store.py          # canvas, safe zones, paths, Gemini models
+├── auth/auth-config.example.json   # copy to auth-config.json (API key)
 ├── modules/modules_initialiser.py  # get_module("config_store")
+├── modules/gemini/                 # transcribe client (image/music later)
 ├── modules/video/                  # timing, ffmpeg, overlays, captions, brand
 ├── modules/brief/                  # YAML loader + sheet → YAML
 ├── pipelines/                    # entry scripts + README.md

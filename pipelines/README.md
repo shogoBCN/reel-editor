@@ -40,10 +40,12 @@ python pipelines/prepare_overlays.py \
 
 ## transcribe
 
-Word-timed Whisper pass for a talking-head clip. Writes `source/transcript.json` for karaoke captions. Requires `openai-whisper`. Language comes from `brief.yaml` (`project.language`, default `es`). Speech-recognition corrections are **not** applied here — they live in the brief and run at compose time so the raw transcript stays auditable.
+Word-timed [Gemini 3.5 Transcribe](https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-3-5-transcribe/) pass for a talking-head clip. Writes `source/transcript.json` for karaoke captions. Requires `google-genai` and `auth/auth-config.json` (copy `auth/auth-config.example.json` and set `gemini.api_key`). Language comes from `brief.yaml` (`project.language`, default `es` → `es-419`). Speech-recognition corrections are **not** applied here — they live in the brief and run at compose time so the raw transcript stays auditable.
+
+Custom vocabulary cannot be combined with word timestamps on this model, so the pipeline requests timings only.
 
 ```bash
-python pipelines/transcribe.py --project examples/ya_tienes --model medium
+python pipelines/transcribe.py --project examples/ya_tienes
 ```
 
 ---

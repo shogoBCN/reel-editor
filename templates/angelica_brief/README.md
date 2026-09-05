@@ -44,7 +44,7 @@ Nombra los archivos en español, **sin espacios**: `frutero_alto.png`, `pregunta
 |---------|---------|------------|
 | Proyecto | `01_proyecto.csv` | Título, dónde empieza/termina el habla, fundido |
 | Imágenes y tiempos | `02_imagenes_y_tiempos.csv` | Una fila por sticker o título |
-| Correcciones | `03_correcciones_transcripcion.csv` | Errores de Whisper (`lacena` → `alacena`) |
+| Correcciones | `03_correcciones_transcripcion.csv` | Errores de transcripción (`lacena` → `alacena`) |
 | Notas | `04_notas_edicion.csv` | Libres (sí / no hacer) |
 
 Una quinta pestaña **Instrucciones** puede pegar este texto. El importador la ignora.

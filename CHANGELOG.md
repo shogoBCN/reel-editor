@@ -48,6 +48,15 @@ Add an entry for every meaningful change as soon as it lands (or when opening th
 
 ### Logs
 
+#### 2026-09-05 — Change — Gemini 3.5 Transcribe replaces Whisper
+
+- **Author:** Thorsten
+- **Area:** `pipelines/transcribe.py`, `modules/gemini/`, `config/config_store.py`, `auth/`, `requirements.txt`
+- **Description:** Karaoke transcripts come from `gemini-3.5-transcribe` (word timestamps). API key lives in gitignored `auth/auth-config.json`; model IDs, AI Studio endpoint, and language map (`es` → `es-419`) live on `config_store`. `get_module("gemini_client")` is the shared SDK handle for later image/music work. Removed `auth/.gitkeep` and `projects/.gitkeep`.
+- **Rationale:** Side-by-side on *Ya tienes* showed Gemini fixing the Whisper misses (`alacena`, `elevada`, `revisé`, `WhatsApp`) without a custom vocabulary.
+- **Impact:** `pip install -r requirements.txt` pulls `google-genai` instead of `openai-whisper`. Copy the auth example before running `pipelines/transcribe.py`.
+- **Links:** [config_store](documentation/config/config_store.md) · [pipelines](pipelines/README.md) · [Gemini 3.5 Transcribe](https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-3-5-transcribe/)
+
 #### 2026-09-05 — Change — Flatten pipeline scripts into `pipelines/`
 
 - **Author:** Thorsten

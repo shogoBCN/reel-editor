@@ -46,7 +46,7 @@ Filenames in the brief must match (`overlays/frutero_alto.png`).
 python pipelines/transcribe.py --project projects/<slug>
 ```
 
-Add Whisper mistakes to `captions.asr_fix` (or the Correcciones tab).
+Copy `auth/auth-config.example.json` to `auth/auth-config.json` first. Add leftover ASR mistakes to `captions.asr_fix` (or the Correcciones tab) if Gemini still misses a homophone.
 
 ## 5. Preview, then encode
 

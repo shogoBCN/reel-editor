@@ -10,7 +10,7 @@ Usage:
     from modules.modules_initialiser import get_module
     config_store = get_module("config_store")
 
-Supported names: ``config_store``.
+Supported names: ``config_store``, ``gemini_client``.
 """
 
 from __future__ import annotations
@@ -19,6 +19,7 @@ from typing import TYPE_CHECKING, Literal, overload
 
 if TYPE_CHECKING:
     from config.config_store import ConfigStore
+    from google.genai.client import Client as GeminiClient
 
 
 class ModuleInitialiser:
@@ -47,6 +48,7 @@ class ModuleInitialiser:
             return
         self._initialized = True
         self._config_store = None
+        self._gemini_client = None
 
     def get_config_store(self):
         """Create ``ConfigStore`` on first use and reuse it forever after.
@@ -59,6 +61,18 @@ class ModuleInitialiser:
 
             self._config_store = ConfigStore()
         return self._config_store
+
+    def get_gemini_client(self):
+        """Create the Gemini SDK client on first use (reads ``auth-config.json``).
+
+        Returns:
+            A ``google.genai.Client`` bound to the configured API key and endpoint.
+        """
+        if self._gemini_client is None:
+            from modules.gemini.client import build_gemini_client
+
+            self._gemini_client = build_gemini_client(self.get_config_store())
+        return self._gemini_client
 
 
 _module_initialiser: ModuleInitialiser | None = None
@@ -80,12 +94,16 @@ def get_module_initialiser() -> ModuleInitialiser:
 def get_module(name: Literal["config_store"]) -> "ConfigStore": ...
 
 
+@overload
+def get_module(name: Literal["gemini_client"]) -> "GeminiClient": ...
+
+
 def get_module(name: str, **kwargs):
     """Fetch a shared module by name (Locaria one-liner).
 
     Args:
-        name: Currently only ``config_store``. Extra names can be added without
-            changing call sites.
+        name: ``config_store`` or ``gemini_client``. Extra names can be added
+            without changing call sites.
         **kwargs: Reserved for future modules that need construction args
             (e.g. a BigQuery client with ``project_id``).
 
@@ -98,6 +116,8 @@ def get_module(name: str, **kwargs):
     initialiser = get_module_initialiser()
     if name == "config_store":
         return initialiser.get_config_store()
+    if name == "gemini_client":
+        return initialiser.get_gemini_client()
     raise ValueError(
-        f"Unknown module {name!r}. Supported: 'config_store'."
+        f"Unknown module {name!r}. Supported: 'config_store', 'gemini_client'."
     )

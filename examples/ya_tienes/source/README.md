@@ -6,4 +6,4 @@ Original drop for this example:
 
 `dra-angelica-website/reels/31-aug-26-ya-tienes/denoised.mp4`
 
-`transcript.json` is tracked so compose can run without Whisper.
+`transcript.json` is tracked so compose can run without calling Gemini again.

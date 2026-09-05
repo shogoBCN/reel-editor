@@ -4,9 +4,9 @@ __pycache__/
 *$py.class
 .DS_Store
 
-# Credentials
+# Credentials — never commit real keys (keep the example template)
 auth/*
-!auth/.gitkeep
+!auth/auth-config.example.json
 
 # Local project media (briefs and small overlays are tracked; video is not)
 *.mp4

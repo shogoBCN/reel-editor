@@ -1,13 +1,13 @@
 """
-Karaoke captions from a word-timed Whisper transcript.
+Karaoke captions from a word-timed transcript (Gemini 3.5 Transcribe).
 
 Groups stay short (≤4 words / 26 chars) so lines never overflow the 9:16
 frame. Words share one baseline — per-word top offsets made accents like
 ``él`` / ``azúcar`` bounce. Speech-recognition corrections are brief-driven
-(Spanish homophones: lacena→alacena).
+(Spanish homophones: lacena→alacena) and still run at compose time.
 
-On-disk ``transcript.json`` still uses compact keys ``w`` / ``s`` / ``e``
-(Whisper export). In memory we use ``text`` / ``start_seconds`` / ``end_seconds``.
+On-disk ``transcript.json`` uses compact keys ``w`` / ``s`` / ``e``.
+In memory we use ``text`` / ``start_seconds`` / ``end_seconds``.
 """
 
 from __future__ import annotations
@@ -30,7 +30,7 @@ from modules.video.image_ops import (
 def apply_speech_recognition_correction(
     token: str, corrections: dict[str, str]
 ) -> str:
-    """Replace a known Whisper miss while keeping trailing punctuation.
+    """Replace a known ASR miss while keeping trailing punctuation.
 
     Args:
         token: One transcript word, possibly with comma/period attached.
@@ -86,7 +86,7 @@ def load_caption_groups(
     ("Entonces concertamos una cita e").
 
     Args:
-        transcript_path: Whisper JSON (``segments[].words[].w/s/e``).
+        transcript_path: Compact JSON (``segments[].words[].w/s/e``).
         trim_start_seconds: Discard groups that end entirely in the cut head.
         speech_recognition_corrections: Homophone map from the brief.
         max_words: Hard cap per karaoke line.

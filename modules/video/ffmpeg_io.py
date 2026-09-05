@@ -213,10 +213,10 @@ def prepare_talk_audio(
 
 
 def extract_mono_wav_16k(source_path: Path, output_wav: Path) -> None:
-    """Mono 16 kHz WAV for Whisper.
+    """Mono 16 kHz WAV for Gemini 3.5 Transcribe.
 
-    Whisper's English/Spanish models expect 16 kHz mono. Stereo talking-head
-    files are mixed down here so we do not resample inside Python.
+    The speech model accepts this PCM shape; we mix stereo talking-head
+    files down here so we do not resample inside Python.
 
     Args:
         source_path: Talking-head file.

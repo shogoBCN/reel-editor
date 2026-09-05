@@ -27,7 +27,8 @@ The brief always uses **source** time. `scripts/check_brief.py` prints both.
 |------------|------|
 | Run the example | `examples/ya_tienes/` + commands below |
 | Change Dra. Angélica colours / endcard | `brands/dra_angelica/` |
-| Change canvas / safe zones | `config/config_store.py` |
+| Change canvas / safe zones / Gemini models | `config/config_store.py` |
+| Put the Gemini API key | `auth/auth-config.json` (copy the example) |
 | Change overlay motion / placement rules | `modules/video/overlays.py` |
 | Change karaoke | `modules/video/captions.py` |
 | Understand a pipeline | [`pipelines/README.md`](../../pipelines/README.md) |
