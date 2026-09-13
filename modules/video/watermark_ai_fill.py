@@ -9,6 +9,7 @@ from __future__ import annotations
 
 from io import BytesIO
 from typing import Any
+import time
 
 import cv2
 import numpy as np
@@ -205,24 +206,34 @@ def gemini_fill_crop(
     send = _guided_send_image(crop_bgr)
     last_error: Exception | None = None
     for prompt in (PROMPT, PROMPT_RETRY):
-        try:
-            response = client.models.generate_content(
-                model=model,
-                contents=[prompt, _pil_from_bgr(send)],
-                config=types.GenerateContentConfig(
-                    response_modalities=["IMAGE"],
-                    image_config=types.ImageConfig(aspect_ratio="1:1"),
-                ),
-            )
-            filled = _bgr_from_pil(_image_from_gemini_response(response))
-            if filled.shape[1] != CROP_W or filled.shape[0] != CROP_H:
-                filled = cv2.resize(
-                    filled, (CROP_W, CROP_H), interpolation=cv2.INTER_AREA
+        for attempt in range(4):
+            try:
+                response = client.models.generate_content(
+                    model=model,
+                    contents=[prompt, _pil_from_bgr(send)],
+                    config=types.GenerateContentConfig(
+                        response_modalities=["IMAGE"],
+                        image_config=types.ImageConfig(aspect_ratio="1:1"),
+                    ),
                 )
-            return filled
-        except RuntimeError as exc:
-            last_error = exc
-            print(f"  retry after: {exc}", flush=True)
+                filled = _bgr_from_pil(_image_from_gemini_response(response))
+                if filled.shape[1] != CROP_W or filled.shape[0] != CROP_H:
+                    filled = cv2.resize(
+                        filled, (CROP_W, CROP_H), interpolation=cv2.INTER_AREA
+                    )
+                return filled
+            except RuntimeError as exc:
+                last_error = exc
+                print(f"  retry after: {exc}", flush=True)
+                break
+            except Exception as exc:
+                last_error = exc
+                delay = min(32.0, 2.0 ** attempt)
+                print(
+                    f"  API error attempt {attempt + 1}: {exc}; sleep {delay:.0f}s",
+                    flush=True,
+                )
+                time.sleep(delay)
     raise RuntimeError(str(last_error))
 
 
