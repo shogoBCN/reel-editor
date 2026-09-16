@@ -97,6 +97,56 @@ def words_to_transcript_document(
     return {"text": full_text.strip(), "segments": segments}
 
 
+def offset_transcript(data: dict[str, Any], offset_seconds: float) -> dict[str, Any]:
+    """Shift every word clock by ``offset_seconds`` (chunked transcribe).
+
+    Args:
+        data: Compact transcript document.
+        offset_seconds: Added to each ``s`` / ``e``.
+
+    Returns:
+        A new document with the same words, later on the source clock.
+    """
+    packed: list[dict[str, Any]] = []
+    for segment in data.get("segments") or []:
+        for word in segment.get("words") or []:
+            packed.append(
+                _pack_word(
+                    str(word.get("w") or ""),
+                    float(word.get("s") or 0.0) + offset_seconds,
+                    float(word.get("e") or 0.0) + offset_seconds,
+                )
+            )
+    return words_to_transcript_document(str(data.get("text") or ""), packed)
+
+
+def merge_transcripts(parts: list[dict[str, Any]]) -> dict[str, Any]:
+    """Concatenate chunk transcripts that already sit on the source clock.
+
+    Args:
+        parts: Offset documents from successive audio windows.
+
+    Returns:
+        One document covering the whole clip.
+    """
+    packed: list[dict[str, Any]] = []
+    texts: list[str] = []
+    for part in parts:
+        text = str(part.get("text") or "").strip()
+        if text:
+            texts.append(text)
+        for segment in part.get("segments") or []:
+            for word in segment.get("words") or []:
+                packed.append(
+                    _pack_word(
+                        str(word.get("w") or ""),
+                        float(word.get("s") or 0.0),
+                        float(word.get("e") or 0.0),
+                    )
+                )
+    return words_to_transcript_document(" ".join(texts), packed)
+
+
 def _audio_transcription_from_response(response: Any) -> tuple[str, list[Any]]:
     """Pull text + word list from a ``generate_content`` response.
 

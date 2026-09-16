@@ -50,6 +50,21 @@ python pipelines/transcribe.py --project examples/ya_tienes
 
 ---
 
+## english_subs
+
+Long German (or other) ceremony clip → English burned-in subtitles with speaker names, loudness normalisation, and the same still as start/end card (fade in from white, fade out).
+
+Transcribes `source/audio_16k.wav` in chunks, writes `source/transcript_de.json`, translates with optional `source/clerk_notes_en.txt` as a sense-check, writes `subtitles/english.ass`, muxes `source/ceremony.mp4` + `overlays/endcard.png` → `output/`.
+
+```bash
+python pipelines/english_subs.py --project projects/16-sept-26-selina-wedding
+python pipelines/english_subs.py --project projects/16-sept-26-selina-wedding --transcribe
+python pipelines/english_subs.py --project projects/16-sept-26-selina-wedding --translate
+python pipelines/english_subs.py --project projects/16-sept-26-selina-wedding --mux
+```
+
+---
+
 ## reel_compose
 
 Talking-head 9:16 reel: trim opening silence, composite brief-driven overlays and karaoke captions, optional jump-cut mixes, fade to white, hold the brand endcard.

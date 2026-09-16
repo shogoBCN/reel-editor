@@ -66,6 +66,7 @@ class ConfigStore:
         self.gemini_transcribe_language_by_brief = {
             "es": ["es-419"],
             "en": ["en-US"],
+            "de": ["de-DE"],
         }
 
         # Instagram / Facebook Reels 9:16. Briefs do not currently override size;
